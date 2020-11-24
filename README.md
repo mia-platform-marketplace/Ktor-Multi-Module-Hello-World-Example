@@ -52,3 +52,6 @@ you should see the following message:
 ```
 
 Congratulations! You have successfully learnt how to use our Ktor multi module _Hello World_ Example on the DevOps Console!
+
+[github-actions]: https://github.com/mia-platform-marketplace/Ktor-Multi-Module-Hello-World-Example/actions
+[github-actions-svg]: https://github.com/mia-platform-marketplace/Ktor-Multi-Module-Hello-World-Example/workflows/Java%20CI%20with%Gradle/badge.svg
