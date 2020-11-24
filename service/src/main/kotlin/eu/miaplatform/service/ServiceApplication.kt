@@ -64,7 +64,7 @@ fun Application.module() {
         else -> HttpLoggingInterceptor.Level.NONE
     }
 
-    val additionalHeadersToProxy = System.getenv("ADDITIONAL_HEADERS_TO_PROXY")
+    val additionalHeadersToProxy = System.getenv("ADDITIONAL_HEADERS_TO_PROXY") ?: ""
     val headersToProxy = HeadersToProxy(additionalHeadersToProxy)
 
     val crudClient = RetrofitClient(basePath = "http://test.mp.trenord.it/v2/", logLevel = httpLogLevel, clazz = CrudClientInterface::class.java)
