@@ -1,8 +1,8 @@
-# Ktor Template walkthrough
+# Ktor Multi Module Hello World Example walkthrough
 
 [![Build Status][github-actions-svg]][github-actions]
 
-This walkthrough will explain you how to correctly create a microservice from a Ktor Template using our DevOps Console.
+This walkthrough will explain you how to correctly create a microservice that returns an hello message from the DevOps Console.
 
 ## Create a microservice
 
