@@ -67,7 +67,7 @@ fun Application.module() {
     val additionalHeadersToProxy = System.getenv("ADDITIONAL_HEADERS_TO_PROXY") ?: ""
     val headersToProxy = HeadersToProxy(additionalHeadersToProxy)
 
-    val crudClient = RetrofitClient(basePath = "http://test.mp.trenord.it/v2/", logLevel = httpLogLevel, clazz = CrudClientInterface::class.java)
+    val crudClient = RetrofitClient(basePath = "http://crud-service/", logLevel = httpLogLevel, clazz = CrudClientInterface::class.java)
 
     module(logLevel, crudClient, headersToProxy)
 }
