@@ -1,0 +1,13 @@
+include:
+  - project: 'platform/pipelines-templates'
+    file: '/build/java/template-java-gradle.yml'
+    ref: master
+  - project: 'platform/pipelines-templates'
+    file: '/build/java/template-java-gradle-test-latest.yml'
+    ref: master
+
+default:
+  image: gradle:6.2.0-jdk8
+
+variables:
+  IMAGE_NAME: %CUSTOM_PLUGIN_IMAGE_NAME%
