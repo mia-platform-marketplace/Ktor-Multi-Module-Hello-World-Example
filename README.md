@@ -14,10 +14,6 @@ For this walkthrough select the following example: **Ktor Template**.
 Give your microservice the name you prefer, in this walkthrough we'll refer to it with the following name: **my-ktor-service-name**. Then, fill the other required fields and confirm that you want to create a microservice.  
 A more detailed description on how to create a Microservice can be found in [Microservice from template - Get started](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/#2-service-creation) section of Mia-Platform documentation.
 
-## Remove status probes
-
-In order to run this example correctly, it is necessary to remove the default probes of your microservice. To do so, go to the table *Microservice configuration* of the newly created microservice *my-ktor-service-name* in the section *Probes*. Once here, delete both the default readiness and liveness paths.
-
 ## Expose an endpoint to your microservice
 
 In order to access to your new microservice it is necessary to create an endpoint that targets it.  
