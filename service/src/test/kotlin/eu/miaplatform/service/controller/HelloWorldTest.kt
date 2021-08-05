@@ -141,6 +141,7 @@ class HelloWorldTest {
                 assertThat(response.status()?.value == HttpStatusCode.BadRequest.value).isTrue()
 
                 val expectedBody = objectMapper.writeValueAsString(
+                    // if you change the package name, remember to update it in the following error or the test will fail
                     ErrorResponse(1000, "Instantiation of [simple type, class eu.miaplatform.service.model.request.HelloWorldRequestBody] value failed for JSON property surname due to missing (therefore NULL) value for creator parameter surname which is a non-nullable type\n at [Source: (InputStreamReader); line: 1, column: 15] (through reference chain: eu.miaplatform.service.model.request.HelloWorldRequestBody[\"surname\"])")
                 )
                 assertThat(expectedBody).isEqualTo(response.content)

@@ -5,6 +5,16 @@
 
 plugins {
     id('org.jetbrains.kotlin.jvm') version "$kotlin_version" apply false
+
+    // Apply to all projects, used to check unused dependencies, run `./gradlew lintGradle` to check dependencies.
+    // Be aware that automatic fixing with `fixLintGradle` might break something.
+    id('nebula.lint') version "17.1.0"
+}
+
+// Do not add dependencies here! Bad practice
+allprojects {
+    group 'eu.miaplatform'
+    gradleLint.rules = ['all-dependency']
 }
 
 class UpdateVersion extends DefaultTask {

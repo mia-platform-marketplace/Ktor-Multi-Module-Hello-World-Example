@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
 
-    val logLevel = when (environment.config.property("ktor.log.level").getString().toUpperCase()) {
+    val logLevel = when (environment.config.property("ktor.log.level").getString().uppercase()) {
         "DEBUG" -> Level.DEBUG
         "ERROR" -> Level.ERROR
         "TRACE" -> Level.TRACE
@@ -49,7 +49,7 @@ fun Application.module() {
         else -> Level.INFO
     }
 
-    val httpLogLevel = when (environment.config.property("ktor.log.httpLogLevel").getString().toUpperCase()) {
+    val httpLogLevel = when (environment.config.property("ktor.log.httpLogLevel").getString().uppercase()) {
         "BASIC" -> HttpLoggingInterceptor.Level.BASIC
         "BODY" -> HttpLoggingInterceptor.Level.BODY
         "HEADERS" -> HttpLoggingInterceptor.Level.HEADERS

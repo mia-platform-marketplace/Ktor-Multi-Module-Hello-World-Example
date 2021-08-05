@@ -2,8 +2,6 @@ plugins {
     id('org.jetbrains.kotlin.jvm')
 }
 
-group 'eu.miaplatform'
-
 dependencies {
     implementation project(":commons")
 
@@ -28,10 +26,10 @@ dependencies {
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
 
-    testImplementation 'io.mockk:mockk:1.12.0'
+    testRuntimeOnly 'io.mockk:mockk:1.12.0'
     testImplementation 'com.willowtreeapps.assertk:assertk:0.24'
     testImplementation 'org.mock-server:mockserver-netty:5.11.2'
 }
