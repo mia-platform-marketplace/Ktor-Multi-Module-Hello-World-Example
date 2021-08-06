@@ -15,6 +15,7 @@ plugins {
 allprojects {
     group 'eu.miaplatform'
     gradleLint.rules = ['all-dependency']
+    gradleLint.alwaysRun = false
 }
 
 class UpdateVersion extends DefaultTask {
