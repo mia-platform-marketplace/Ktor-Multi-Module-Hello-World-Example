@@ -40,6 +40,10 @@ dependencies {
     testImplementation 'org.mock-server:mockserver-netty:5.11.2'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 def generatedVersionDir = "${buildDir}/generated-version"
 
 sourceSets {
