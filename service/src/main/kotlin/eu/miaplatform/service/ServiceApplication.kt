@@ -2,7 +2,9 @@ package eu.miaplatform.service
 
 import ch.qos.logback.classic.util.ContextInitializer
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.papsign.ktor.openapigen.OpenAPIGen
 import com.papsign.ktor.openapigen.interop.withAPI
@@ -139,7 +141,9 @@ fun Application.module(
 
     install(ContentNegotiation) {
         jackson {
-            this.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            registerModule(JavaTimeModule())
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
     }
 

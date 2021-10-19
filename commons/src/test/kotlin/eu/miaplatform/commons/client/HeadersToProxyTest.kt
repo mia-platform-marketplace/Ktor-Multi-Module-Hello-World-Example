@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HeadersToProxyTest {
 

@@ -40,6 +40,14 @@ dependencies {
     testImplementation 'org.mock-server:mockserver-netty:5.11.2'
 }
 
+// exclude junit4 transitive imports
+configurations.implementation {
+    exclude group: 'junit', module: 'junit'
+}
+configurations.testImplementation {
+    exclude group: 'junit', module: 'junit'
+}
+
 test {
     useJUnitPlatform()
 }

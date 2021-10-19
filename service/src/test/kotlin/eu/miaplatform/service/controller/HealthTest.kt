@@ -13,9 +13,9 @@ import eu.miaplatform.service.module
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
-import org.junit.Test
 import io.ktor.server.testing.withTestApplication
 import okhttp3.logging.HttpLoggingInterceptor
+import org.junit.jupiter.api.Test
 import org.slf4j.event.Level
 
 class HealthTest {

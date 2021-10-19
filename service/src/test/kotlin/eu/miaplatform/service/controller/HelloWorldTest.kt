@@ -12,13 +12,10 @@ import eu.miaplatform.service.model.ErrorResponse
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
 import eu.miaplatform.service.module
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import io.ktor.server.testing.withTestApplication
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import okhttp3.logging.HttpLoggingInterceptor
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockserver.client.MockServerClient
 import org.mockserver.integration.ClientAndServer
