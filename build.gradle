@@ -18,6 +18,18 @@ allprojects {
     gradleLint.alwaysRun = false
 }
 
+subprojects {
+    // setup junit5 and remove all api imports of junit 4
+    configurations {
+        implementation {
+            exclude group: 'junit', module: 'junit'
+        }
+        testImplementation {
+            exclude group: 'junit', module: 'junit'
+        }
+    }
+}
+
 class UpdateVersion extends DefaultTask {
     private String tag
 

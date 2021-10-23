@@ -12,7 +12,11 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    inline fun <reified T> build(basePath: String, logLevel: HttpLoggingInterceptor.Level): T {
+    inline fun <reified T> build(
+        basePath: String,
+        logLevel: HttpLoggingInterceptor.Level,
+        mapperBuilder: ObjectMapper.() -> Unit = ObjectMapper::defaultRetrofitBuilder
+    ): T {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = logLevel
         }
@@ -24,11 +28,7 @@ object RetrofitClient {
             .addInterceptor(loggingInterceptor)
             .build()
 
-        val mapper = ObjectMapper().apply {
-            setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            registerKotlinModule()
-        }
+        val mapper = ObjectMapper().apply { mapperBuilder() }
 
         return Retrofit.Builder()
             .baseUrl(basePath)
@@ -37,4 +37,10 @@ object RetrofitClient {
             .build()
             .create(T::class.java)
     }
+}
+
+fun ObjectMapper.defaultRetrofitBuilder() {
+    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    registerKotlinModule()
 }

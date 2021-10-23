@@ -2,26 +2,26 @@ package eu.miaplatform.service.controller
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.HeadersToProxy
-import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.commons.model.HealthBodyResponse
 import eu.miaplatform.service.module
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import okhttp3.logging.HttpLoggingInterceptor
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.slf4j.event.Level
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HealthTest {
     private val objectMapper = ObjectMapper()
 
-    private val crudClient = RetrofitClient.build<CrudClientInterface>("http://crud-url", HttpLoggingInterceptor.Level.NONE)
+    private val crudClient = mockk<CrudClientInterface>()
 
     @Test
     fun `Health should return OK`() {
@@ -35,7 +35,7 @@ class HealthTest {
             handleRequest(HttpMethod.Get, "/-/healthz") {
 
             }.apply {
-                assertThat(response.status()?.value == HttpStatusCode.OK.value).isTrue()
+                assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
                 val version = StatusService().getVersion()
                 val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
@@ -57,7 +57,7 @@ class HealthTest {
             handleRequest(HttpMethod.Get, "/-/ready") {
 
             }.apply {
-                assertThat(response.status()?.value == HttpStatusCode.OK.value).isTrue()
+                assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
                 val version = StatusService().getVersion()
                 val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
@@ -80,7 +80,7 @@ class HealthTest {
             handleRequest(HttpMethod.Get, "/-/check-up") {
 
             }.apply {
-                assertThat(response.status()?.value == HttpStatusCode.OK.value).isTrue()
+                assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
                 val version = StatusService().getVersion()
                 val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
