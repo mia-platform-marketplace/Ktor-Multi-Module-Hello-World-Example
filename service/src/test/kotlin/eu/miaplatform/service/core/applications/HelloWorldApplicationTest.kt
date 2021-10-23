@@ -1,4 +1,4 @@
-package eu.miaplatform.service.controller
+package eu.miaplatform.service.core.applications
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.HeadersToProxy
 import eu.miaplatform.commons.client.RetrofitClient
+import eu.miaplatform.service.baseModule
 import eu.miaplatform.service.model.ErrorResponse
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
-import eu.miaplatform.service.module
-import eu.miaplatform.setupResponse
+import eu.miaplatform.service.setupResponse
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -21,7 +21,7 @@ import org.mockserver.integration.ClientAndServer
 import org.slf4j.event.Level
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class HelloWorldTest {
+class HelloWorldApplicationTest {
 
     private val objectMapper = ObjectMapper().apply {
         setSerializationInclusion(JsonInclude.Include.NON_NULL)
@@ -37,11 +37,8 @@ class HelloWorldTest {
         @Test
         fun `Get should return success object message`() {
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello") {
                 }.apply {
@@ -62,11 +59,8 @@ class HelloWorldTest {
         @Test
         fun `Get should return success object message with query parameter`() {
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello?queryParam=param") {
                 }.apply {
@@ -91,11 +85,8 @@ class HelloWorldTest {
         fun `Post should return success object message with path param`() {
 
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 val body = objectMapper.writeValueAsString(
                     HelloWorldRequestBody("name", "surname")
@@ -122,11 +113,8 @@ class HelloWorldTest {
         @Test
         fun `Post should return bad request if body is malformed`() {
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 val body = objectMapper.writeValueAsString(
                     mapOf("name" to "name")
@@ -172,11 +160,8 @@ class HelloWorldTest {
             )
 
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call") {
                 }.apply {
@@ -204,11 +189,8 @@ class HelloWorldTest {
             )
 
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call") {
                 }.apply {
@@ -231,11 +213,8 @@ class HelloWorldTest {
                 objectMapper.writeValueAsString(listOf("book1", "book2"))
             )
             withTestApplication({
-                module (
-                    logLevel = Level.DEBUG,
-                    crudClient = crudClient,
-                    headersToProxy = HeadersToProxy()
-                )
+                baseModule(Level.DEBUG)
+                install(HelloWorldApplication(crudClient, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call?queryParam=param") {
                 }.apply {

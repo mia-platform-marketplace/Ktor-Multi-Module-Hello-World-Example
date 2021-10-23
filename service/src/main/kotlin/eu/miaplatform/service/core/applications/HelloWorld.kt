@@ -1,7 +1,7 @@
-package eu.miaplatform.service.controller
+package eu.miaplatform.service.core.applications
 
-import com.papsign.ktor.openapigen.route.apiRouting
 import com.papsign.ktor.openapigen.route.info
+import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute
 import com.papsign.ktor.openapigen.route.path.normal.get
 import com.papsign.ktor.openapigen.route.path.normal.post
 import com.papsign.ktor.openapigen.route.response.respond
@@ -9,19 +9,21 @@ import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.tag
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.HeadersToProxy
-import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.commons.model.InternalServerErrorException
 import eu.miaplatform.service.model.ServiceTag
 import eu.miaplatform.service.model.request.HelloWorldGetRequest
 import eu.miaplatform.service.model.request.HelloWorldPostRequest
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
-import io.ktor.application.Application
+import io.ktor.application.*
 import kotlinx.coroutines.async
 
-fun helloWorld(application: Application, crudClient: CrudClientInterface, headersToProxy: HeadersToProxy) {
+class HelloWorldApplication(
+    private val crudClient: CrudClientInterface,
+    private val headersToProxy: HeadersToProxy
+) : CustomApiApplication {
 
-    application.apiRouting {
+    override fun install(apiRouting: NormalOpenAPIRoute): Unit = apiRouting.run {
         route("/hello") {
             tag(ServiceTag) {
                 get<HelloWorldGetRequest, HelloWorldResponse>(
@@ -55,7 +57,7 @@ fun helloWorld(application: Application, crudClient: CrudClientInterface, header
                 ) { params ->
 
                     val headers = headersToProxy.proxy(this.pipeline.context)
-                    val booksCall = application.async {
+                    val booksCall = pipeline.application.async {
                         crudClient.getBooks(headers)
                     }
 

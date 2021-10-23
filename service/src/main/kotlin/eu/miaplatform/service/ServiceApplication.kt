@@ -8,7 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.papsign.ktor.openapigen.OpenAPIGen
 import com.papsign.ktor.openapigen.interop.withAPI
-import com.papsign.ktor.openapigen.route.apiRouting
 import com.papsign.ktor.openapigen.schema.builder.provider.DefaultObjectSchemaProvider
 import com.papsign.ktor.openapigen.schema.namer.DefaultSchemaNamer
 import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
@@ -20,16 +19,14 @@ import eu.miaplatform.commons.model.BadRequestException
 import eu.miaplatform.commons.model.InternalServerErrorException
 import eu.miaplatform.commons.model.NotFoundException
 import eu.miaplatform.commons.model.UnauthorizedException
-import eu.miaplatform.service.controller.documentation
-import eu.miaplatform.service.controller.health
-import eu.miaplatform.service.controller.helloWorld
+import eu.miaplatform.service.core.applications.*
+import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
 import eu.miaplatform.service.model.ErrorResponse
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.jackson.*
 import io.ktor.request.*
-import io.ktor.routing.*
 import io.ktor.server.netty.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.slf4j.event.Level
@@ -66,15 +63,17 @@ fun Application.module() {
         logLevel = httpLogLevel
     )
 
-    module(logLevel, crudClient, headersToProxy)
+    baseModule(logLevel)
+    customModule(crudClient, headersToProxy)
 }
 
-fun Application.module(
-    logLevel: Level,
-    crudClient: CrudClientInterface,
-    headersToProxy: HeadersToProxy
-) {
 
+/**
+ * Install common functionalities like open api, logging, metrics, serialization, etc. for this application.
+ */
+fun Application.baseModule(
+    logLevel: Level
+) {
     install(CallLogging) {
         level = logLevel
         filter { call -> call.request.path().startsWith("/") }
@@ -146,14 +145,17 @@ fun Application.module(
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
     }
+}
 
-    apiRouting {
-        //here goes your controller
-        helloWorld(this@module, crudClient, headersToProxy)
-    }
 
-    routing {
-        health()
-        documentation(this.application)
-    }
+/**
+ * Install custom routes for this application.
+ */
+fun Application.customModule(
+    crudClient: CrudClientInterface,
+    headersToProxy: HeadersToProxy
+) {
+    install(HelloWorldApplication(crudClient, headersToProxy))
+    install(DocumentationApplication())
+    install(HealthApplication())
 }

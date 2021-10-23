@@ -1,36 +1,28 @@
-package eu.miaplatform.service.controller
+package eu.miaplatform.service.core.applications
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.StatusService
-import eu.miaplatform.commons.client.CrudClientInterface
-import eu.miaplatform.commons.client.HeadersToProxy
 import eu.miaplatform.commons.model.HealthBodyResponse
-import eu.miaplatform.service.module
+import eu.miaplatform.service.baseModule
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.slf4j.event.Level
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class HealthTest {
+class HealthApplicationTest {
     private val objectMapper = ObjectMapper()
-
-    private val crudClient = mockk<CrudClientInterface>()
 
     @Test
     fun `Health should return OK`() {
         withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
+            baseModule (Level.DEBUG)
+            install(HealthApplication())
         }) {
             handleRequest(HttpMethod.Get, "/-/healthz") {
 
@@ -48,11 +40,8 @@ class HealthTest {
     @Test
     fun `Ready should return OK`() {
         withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
+            baseModule (Level.DEBUG)
+            install(HealthApplication())
         }) {
             handleRequest(HttpMethod.Get, "/-/ready") {
 
@@ -71,11 +60,8 @@ class HealthTest {
     @Test
     fun `Check Up should return OK`() {
         withTestApplication({
-            module (
-                logLevel = Level.DEBUG,
-                crudClient = crudClient,
-                headersToProxy = HeadersToProxy()
-            )
+            baseModule (Level.DEBUG)
+            install(HealthApplication())
         }) {
             handleRequest(HttpMethod.Get, "/-/check-up") {
 

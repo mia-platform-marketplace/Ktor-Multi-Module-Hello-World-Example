@@ -1,4 +1,4 @@
-package eu.miaplatform
+package eu.miaplatform.service
 
 import org.mockserver.client.MockServerClient
 import org.mockserver.model.HttpRequest

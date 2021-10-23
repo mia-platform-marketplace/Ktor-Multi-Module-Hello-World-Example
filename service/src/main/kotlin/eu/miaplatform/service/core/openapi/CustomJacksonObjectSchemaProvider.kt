@@ -1,4 +1,4 @@
-package eu.miaplatform.service
+package eu.miaplatform.service.core.openapi
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.papsign.ktor.openapigen.*
