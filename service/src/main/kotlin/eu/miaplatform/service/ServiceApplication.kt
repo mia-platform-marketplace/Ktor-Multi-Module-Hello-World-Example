@@ -20,6 +20,8 @@ import eu.miaplatform.commons.model.InternalServerErrorException
 import eu.miaplatform.commons.model.NotFoundException
 import eu.miaplatform.commons.model.UnauthorizedException
 import eu.miaplatform.service.core.applications.*
+import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
+import eu.miaplatform.service.core.applications.helloworld.HelloWorldLogic
 import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
 import eu.miaplatform.service.model.ErrorResponse
 import io.ktor.application.*
@@ -64,7 +66,9 @@ fun Application.module() {
     )
 
     baseModule(logLevel)
-    customModule(crudClient, headersToProxy)
+    install(HelloWorldApplication(HelloWorldLogic(crudClient, headersToProxy)))
+    install(DocumentationApplication())
+    install(HealthApplication())
 }
 
 
@@ -145,17 +149,4 @@ fun Application.baseModule(
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
     }
-}
-
-
-/**
- * Install custom routes for this application.
- */
-fun Application.customModule(
-    crudClient: CrudClientInterface,
-    headersToProxy: HeadersToProxy
-) {
-    install(HelloWorldApplication(crudClient, headersToProxy))
-    install(DocumentationApplication())
-    install(HealthApplication())
 }
