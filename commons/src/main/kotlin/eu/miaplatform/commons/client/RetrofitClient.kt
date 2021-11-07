@@ -2,6 +2,7 @@ package eu.miaplatform.commons.client
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.Serialization
+import io.ktor.client.request.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

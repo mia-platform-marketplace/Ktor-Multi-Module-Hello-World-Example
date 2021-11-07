@@ -1,4 +1,4 @@
-package eu.miaplatform.commons.client
+package eu.miaplatform.commons.ktor
 
 import io.ktor.application.*
 

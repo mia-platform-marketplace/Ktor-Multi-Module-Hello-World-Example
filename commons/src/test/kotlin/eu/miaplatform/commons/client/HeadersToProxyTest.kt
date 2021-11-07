@@ -2,6 +2,7 @@ package eu.miaplatform.commons.client
 
 import assertk.assertThat
 import assertk.assertions.*
+import eu.miaplatform.commons.ktor.HeadersToProxy
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test

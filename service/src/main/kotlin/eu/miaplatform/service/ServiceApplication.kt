@@ -1,10 +1,7 @@
 package eu.miaplatform.service
 
 import ch.qos.logback.classic.util.ContextInitializer
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.papsign.ktor.openapigen.OpenAPIGen
 import com.papsign.ktor.openapigen.interop.withAPI
@@ -14,7 +11,7 @@ import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
 import eu.miaplatform.commons.Serialization
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
-import eu.miaplatform.commons.client.HeadersToProxy
+import eu.miaplatform.commons.ktor.HeadersToProxy
 import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.commons.model.BadRequestException
 import eu.miaplatform.commons.model.InternalServerErrorException

@@ -7,7 +7,7 @@ import com.papsign.ktor.openapigen.route.path.normal.post
 import com.papsign.ktor.openapigen.route.response.respond
 import com.papsign.ktor.openapigen.route.route
 import com.papsign.ktor.openapigen.route.tag
-import eu.miaplatform.commons.client.HeadersToProxy
+import eu.miaplatform.commons.ktor.HeadersToProxy
 import eu.miaplatform.commons.model.InternalServerErrorException
 import eu.miaplatform.service.core.applications.CustomApiApplication
 import eu.miaplatform.service.model.ServiceTag

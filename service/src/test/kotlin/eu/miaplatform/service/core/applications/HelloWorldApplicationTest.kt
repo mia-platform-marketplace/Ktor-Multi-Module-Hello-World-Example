@@ -5,7 +5,7 @@ import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.client.CrudClientInterface
-import eu.miaplatform.commons.client.HeadersToProxy
+import eu.miaplatform.commons.ktor.HeadersToProxy
 import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.service.baseModule
 import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
