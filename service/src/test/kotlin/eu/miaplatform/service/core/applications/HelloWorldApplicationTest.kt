@@ -9,7 +9,7 @@ import eu.miaplatform.commons.client.HeadersToProxy
 import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.service.baseModule
 import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldLogic
+import eu.miaplatform.service.core.applications.helloworld.HelloWorldService
 import eu.miaplatform.service.model.ErrorResponse
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
@@ -17,7 +17,6 @@ import eu.miaplatform.service.setupResponse
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import io.mockk.clearAllMocks
-import io.mockk.mockk
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.jupiter.api.*
 import org.mockserver.client.MockServerClient
@@ -39,7 +38,7 @@ class HelloWorldApplicationTest {
     private var mockServer: MockServerClient = MockServerClient(host, port)
 
     private val crudClient = RetrofitClient.build<CrudClientInterface>("http://$host:$port", HttpLoggingInterceptor.Level.NONE)
-    private val logic = HelloWorldLogic(crudClient, HeadersToProxy())
+    private val service = HelloWorldService(crudClient)
 
     @BeforeEach
     fun setUp() {
@@ -52,7 +51,7 @@ class HelloWorldApplicationTest {
         fun `Get should return success object message`() {
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello") {
                 }.apply {
@@ -74,7 +73,7 @@ class HelloWorldApplicationTest {
         fun `Get should return success object message with query parameter`() {
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello?queryParam=param") {
                 }.apply {
@@ -100,7 +99,7 @@ class HelloWorldApplicationTest {
 
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 val body = objectMapper.writeValueAsString(
                     HelloWorldRequestBody("name", "surname")
@@ -128,7 +127,7 @@ class HelloWorldApplicationTest {
         fun `Post should return bad request if body is malformed`() {
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 val body = objectMapper.writeValueAsString(
                     mapOf("name" to "name")
@@ -175,7 +174,7 @@ class HelloWorldApplicationTest {
 
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call") {
                 }.apply {
@@ -204,14 +203,14 @@ class HelloWorldApplicationTest {
 
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call") {
                 }.apply {
                     assertThat(response.status()?.value).isEqualTo(HttpStatusCode.InternalServerError.value)
 
                     val expectedBody = objectMapper.writeValueAsString(
-                        ErrorResponse(1002, "books call failed")
+                        ErrorResponse(1000, "books call failed")
                     )
                     assertThat(response.content).isEqualTo(expectedBody)
                 }
@@ -228,7 +227,7 @@ class HelloWorldApplicationTest {
             )
             withTestApplication({
                 baseModule(Level.DEBUG)
-                install(HelloWorldApplication(logic))
+                install(HelloWorldApplication(service, HeadersToProxy()))
             }) {
                 handleRequest(HttpMethod.Get, "/hello/with-call?queryParam=param") {
                 }.apply {

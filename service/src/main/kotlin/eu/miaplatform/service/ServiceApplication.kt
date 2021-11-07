@@ -11,6 +11,7 @@ import com.papsign.ktor.openapigen.interop.withAPI
 import com.papsign.ktor.openapigen.schema.builder.provider.DefaultObjectSchemaProvider
 import com.papsign.ktor.openapigen.schema.namer.DefaultSchemaNamer
 import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
+import eu.miaplatform.commons.Serialization
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.HeadersToProxy
@@ -21,7 +22,7 @@ import eu.miaplatform.commons.model.NotFoundException
 import eu.miaplatform.commons.model.UnauthorizedException
 import eu.miaplatform.service.core.applications.*
 import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldLogic
+import eu.miaplatform.service.core.applications.helloworld.HelloWorldService
 import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
 import eu.miaplatform.service.model.ErrorResponse
 import io.ktor.application.*
@@ -66,7 +67,8 @@ fun Application.module() {
     )
 
     baseModule(logLevel)
-    install(HelloWorldApplication(HelloWorldLogic(crudClient, headersToProxy)))
+    val helloWorldService = HelloWorldService(crudClient)
+    install(HelloWorldApplication(helloWorldService, headersToProxy))
     install(DocumentationApplication())
     install(HealthApplication())
 }
@@ -144,9 +146,7 @@ fun Application.baseModule(
 
     install(ContentNegotiation) {
         jackson {
-            setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            registerModule(JavaTimeModule())
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            Serialization.apply { defaultKtorLiteral() }
         }
     }
 }

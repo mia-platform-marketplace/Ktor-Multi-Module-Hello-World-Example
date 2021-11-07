@@ -1,9 +1,7 @@
 package eu.miaplatform.commons.client
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import eu.miaplatform.commons.Serialization
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -15,7 +13,7 @@ object RetrofitClient {
     inline fun <reified T> build(
         basePath: String,
         logLevel: HttpLoggingInterceptor.Level,
-        mapperBuilder: ObjectMapper.() -> Unit = ObjectMapper::defaultRetrofitBuilder
+        objectMapper: ObjectMapper = Serialization.defaultRetrofitMapper
     ): T {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = logLevel
@@ -28,19 +26,11 @@ object RetrofitClient {
             .addInterceptor(loggingInterceptor)
             .build()
 
-        val mapper = ObjectMapper().apply { mapperBuilder() }
-
         return Retrofit.Builder()
             .baseUrl(basePath)
             .client(client)
-            .addConverterFactory(JacksonConverterFactory.create(mapper))
+            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
             .build()
             .create(T::class.java)
     }
-}
-
-fun ObjectMapper.defaultRetrofitBuilder() {
-    setSerializationInclusion(JsonInclude.Include.NON_NULL)
-    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    registerKotlinModule()
 }
