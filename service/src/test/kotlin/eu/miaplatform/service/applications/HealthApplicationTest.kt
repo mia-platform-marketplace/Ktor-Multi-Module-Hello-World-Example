@@ -1,9 +1,10 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.service.applications
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.StatusService
+import eu.miaplatform.commons.ktor.install
 import eu.miaplatform.commons.model.HealthBodyResponse
 import eu.miaplatform.service.baseModule
 import io.ktor.http.HttpMethod

@@ -1,9 +1,9 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.service.applications
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import eu.miaplatform.commons.client.CrudClientInterface
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldService
+import eu.miaplatform.service.services.HelloWorldService
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.mockk.*

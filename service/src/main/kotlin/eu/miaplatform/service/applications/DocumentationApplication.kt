@@ -1,6 +1,7 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.service.applications
 
 import com.papsign.ktor.openapigen.openAPIGen
+import eu.miaplatform.commons.ktor.CustomApplication
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.routing.*

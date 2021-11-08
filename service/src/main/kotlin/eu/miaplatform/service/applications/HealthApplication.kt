@@ -1,6 +1,7 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.service.applications
 
 import eu.miaplatform.commons.StatusService
+import eu.miaplatform.commons.ktor.CustomApplication
 import eu.miaplatform.commons.model.HealthBodyResponse
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode

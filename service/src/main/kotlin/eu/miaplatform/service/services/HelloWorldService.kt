@@ -1,4 +1,4 @@
-package eu.miaplatform.service.core.applications.helloworld
+package eu.miaplatform.service.services
 
 import eu.miaplatform.commons.client.CrudClientInterface
 

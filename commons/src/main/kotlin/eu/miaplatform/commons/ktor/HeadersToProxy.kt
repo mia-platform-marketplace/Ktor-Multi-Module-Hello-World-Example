@@ -2,58 +2,29 @@ package eu.miaplatform.commons.ktor
 
 import io.ktor.application.*
 
-class HeadersToProxy(
-    private val additionalHeaderToProxy: String = ""
-) {
-    private val requestIdHeaderKey = "x-request-id"
-    private val userIdHeaderKey = System.getenv("USERID_HEADER_KEY") ?: "miauserid"
-    private val groupsHeaderKey = System.getenv("GROUPS_HEADER_KEY") ?: "miausergroups"
-    private val clientTypeHeaderKey = System.getenv("CLIENTTYPE_HEADER_KEY") ?: "client-type"
-    private val backofficeHeaderKey = System.getenv("BACKOFFICE_HEADER_KEY") ?: "isbackoffice"
-    private val userPropertyHeaderKey = System.getenv("USER_PROPERTIES_HEADER_KEY") ?: "miauserproperties"
+fun ApplicationCall.headersToProxy(additionalHeaderToProxy: String = ""): Map<String, String> {
+    val requestIdHeaderKey = "x-request-id"
+    val userIdHeaderKey = System.getenv("USERID_HEADER_KEY") ?: "miauserid"
+    val groupsHeaderKey = System.getenv("GROUPS_HEADER_KEY") ?: "miausergroups"
+    val clientTypeHeaderKey = System.getenv("CLIENTTYPE_HEADER_KEY") ?: "client-type"
+    val backofficeHeaderKey = System.getenv("BACKOFFICE_HEADER_KEY") ?: "isbackoffice"
+    val userPropertyHeaderKey = System.getenv("USER_PROPERTIES_HEADER_KEY") ?: "miauserproperties"
 
-    fun proxy(applicationCall: ApplicationCall): Map<String, String> {
+    val headers = mutableMapOf<String, String>()
 
-        val requestIdHeader = applicationCall.request.headers[requestIdHeaderKey]
-        val miaUserIdHeader = applicationCall.request.headers[userIdHeaderKey]
-        val groupsHeader = applicationCall.request.headers[groupsHeaderKey]
-        val clientTypeHeader = applicationCall.request.headers[clientTypeHeaderKey]
-        val backofficeHeader = applicationCall.request.headers[backofficeHeaderKey]
-        val userPropertiesHeaderKey = applicationCall.request.headers[userPropertyHeaderKey]
+    request.headers[requestIdHeaderKey]?.let { headers[requestIdHeaderKey] = it }
+    request.headers[userIdHeaderKey]?.let { headers[userIdHeaderKey] = it }
+    request.headers[groupsHeaderKey]?.let { headers[groupsHeaderKey] = it }
+    request.headers[clientTypeHeaderKey]?.let { headers[clientTypeHeaderKey] = it }
+    request.headers[backofficeHeaderKey]?.let { headers[backofficeHeaderKey] = it }
+    request.headers[userPropertyHeaderKey]?.let { headers[userPropertyHeaderKey] = it }
 
-        val headers = mutableMapOf<String, String>()
-
-        requestIdHeader?.let { headerValue ->
-            headers[requestIdHeaderKey] = headerValue
+    additionalHeaderToProxy.split(",").forEach { key ->
+        val headerValue = request.headers[key]
+        headerValue?.let { header ->
+            headers[key] =  header
         }
-
-        miaUserIdHeader?.let { headerValue ->
-            headers[userIdHeaderKey] = headerValue
-        }
-
-        groupsHeader?.let { headerValue ->
-            headers[groupsHeaderKey] = headerValue
-        }
-
-        clientTypeHeader?.let { headerValue ->
-            headers[clientTypeHeaderKey] = headerValue
-        }
-
-        backofficeHeader?.let { headerValue ->
-            headers[backofficeHeaderKey] =  headerValue
-        }
-
-        userPropertiesHeaderKey?.let { headerValue ->
-            headers[userPropertyHeaderKey] =  headerValue
-        }
-
-        additionalHeaderToProxy.split(",").forEach { key ->
-            val headerValue = applicationCall.request.headers[key]
-            headerValue?.let { header ->
-                headers[key] =  header
-            }
-        }
-
-        return headers
     }
+
+    return headers
 }

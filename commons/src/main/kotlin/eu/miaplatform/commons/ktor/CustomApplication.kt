@@ -1,4 +1,4 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.commons.ktor
 
 import com.papsign.ktor.openapigen.route.apiRouting
 import com.papsign.ktor.openapigen.route.path.normal.NormalOpenAPIRoute

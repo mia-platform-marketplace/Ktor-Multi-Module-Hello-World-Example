@@ -11,15 +11,15 @@ import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
 import eu.miaplatform.commons.Serialization
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
-import eu.miaplatform.commons.ktor.HeadersToProxy
 import eu.miaplatform.commons.client.RetrofitClient
+import eu.miaplatform.commons.ktor.install
 import eu.miaplatform.commons.model.BadRequestException
 import eu.miaplatform.commons.model.InternalServerErrorException
 import eu.miaplatform.commons.model.NotFoundException
 import eu.miaplatform.commons.model.UnauthorizedException
-import eu.miaplatform.service.core.applications.*
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldService
+import eu.miaplatform.service.applications.*
+import eu.miaplatform.service.applications.helloworld.HelloWorldApplication
+import eu.miaplatform.service.services.HelloWorldService
 import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
 import eu.miaplatform.service.model.ErrorResponse
 import io.ktor.application.*
@@ -56,7 +56,6 @@ fun Application.module() {
     }
 
     val additionalHeadersToProxy = System.getenv("ADDITIONAL_HEADERS_TO_PROXY") ?: ""
-    val headersToProxy = HeadersToProxy(additionalHeadersToProxy)
 
     val crudClient = RetrofitClient.build<CrudClientInterface>(
         basePath = "http://crud-service/",
@@ -65,7 +64,7 @@ fun Application.module() {
 
     baseModule(logLevel)
     val helloWorldService = HelloWorldService(crudClient)
-    install(HelloWorldApplication(helloWorldService, headersToProxy))
+    install(HelloWorldApplication(additionalHeadersToProxy, helloWorldService))
     install(DocumentationApplication())
     install(HealthApplication())
 }

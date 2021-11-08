@@ -1,13 +1,13 @@
-package eu.miaplatform.service.core.applications
+package eu.miaplatform.service.applications
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.miaplatform.commons.ktor.HeadersToProxy
+import eu.miaplatform.commons.ktor.install
 import eu.miaplatform.service.baseModule
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.core.applications.helloworld.HelloWorldService
+import eu.miaplatform.service.applications.helloworld.HelloWorldApplication
+import eu.miaplatform.service.services.HelloWorldService
 import eu.miaplatform.service.model.ErrorResponse
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
@@ -42,7 +42,7 @@ class HelloWorldApplicationTest : DescribeSpec({
             it("should return success object message") {
                 withTestApplication({
                     baseModule(Level.DEBUG)
-                    install(HelloWorldApplication(service, HeadersToProxy()))
+                    install(HelloWorldApplication("", service))
                 }) {
                     handleRequest(HttpMethod.Get, "/hello") {
                     }.apply {
@@ -63,7 +63,7 @@ class HelloWorldApplicationTest : DescribeSpec({
             it("should return success object message with query parameter") {
                 withTestApplication({
                     baseModule(Level.DEBUG)
-                    install(HelloWorldApplication(service, HeadersToProxy()))
+                    install(HelloWorldApplication("", service))
                 }) {
                     handleRequest(HttpMethod.Get, "/hello?queryParam=param") {
                     }.apply {
@@ -87,7 +87,7 @@ class HelloWorldApplicationTest : DescribeSpec({
                 it("should return success object message with path param") {
                     withTestApplication({
                         baseModule(Level.DEBUG)
-                        install(HelloWorldApplication(service, HeadersToProxy()))
+                        install(HelloWorldApplication("", service))
                     }) {
                         val body = objectMapper.writeValueAsString(
                             HelloWorldRequestBody("name", "surname")
@@ -114,7 +114,7 @@ class HelloWorldApplicationTest : DescribeSpec({
                 it("should return bad request if body is malformed") {
                     withTestApplication({
                         baseModule(Level.DEBUG)
-                        install(HelloWorldApplication(service, HeadersToProxy()))
+                        install(HelloWorldApplication("", service))
                     }) {
                         val body = objectMapper.writeValueAsString(
                             mapOf("name" to "name")
@@ -145,7 +145,7 @@ class HelloWorldApplicationTest : DescribeSpec({
 
                     withTestApplication({
                         baseModule(Level.DEBUG)
-                        install(HelloWorldApplication(service, HeadersToProxy()))
+                        install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call") {
                         }.apply {
@@ -169,7 +169,7 @@ class HelloWorldApplicationTest : DescribeSpec({
 
                     withTestApplication({
                         baseModule(Level.DEBUG)
-                        install(HelloWorldApplication(service, HeadersToProxy()))
+                        install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call") {
                         }.apply {
@@ -189,7 +189,7 @@ class HelloWorldApplicationTest : DescribeSpec({
 
                     withTestApplication({
                         baseModule(Level.DEBUG)
-                        install(HelloWorldApplication(service, HeadersToProxy()))
+                        install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call?queryParam=param") {
                         }.apply {
