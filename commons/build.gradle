@@ -21,7 +21,6 @@ dependencies {
     implementation libs.bundles.impl.jackson
 
     testImplementation libs.bundles.testImpl.testSuite
-    testImplementation 'org.mock-server:mockserver-netty:5.11.2'
 }
 
 test {
