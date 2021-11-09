@@ -1,17 +1,16 @@
-package eu.miaplatform.commons.client
+package eu.miaplatform.commons.ktor
 
 import assertk.assertThat
 import assertk.assertions.*
 import eu.miaplatform.commons.ktor.headersToProxy
+import io.kotest.core.spec.style.DescribeSpec
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Test
 
-// TODO use kotest
-class HeadersToProxyTest {
+class HeadersToProxyTest : DescribeSpec ({
 
-    @Test
-    fun `Returns empty header map when no header is present`() {
+    it("returns empty header map when no header is present") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
             }.apply {
@@ -21,8 +20,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when x-request-id has a value`() {
+    it("returns the correct header map when x-request-id has a value") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("x-request-id", "1234abcd")
@@ -33,8 +31,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when miauserid has a value`() {
+    it("returns the correct header map when miauserid has a value") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("miauserid", "userid")
@@ -45,8 +42,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when miausergroups has a value`() {
+    it("returns the correct header map when miausergroups has a value") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("miausergroups", "group")
@@ -56,8 +52,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when client-type has a value`() {
+    it("returns the correct header map when client-type has a value") {
         withTestApplication {
 
             handleRequest(HttpMethod.Get, "/proxy-headers"){
@@ -68,8 +63,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when isbackoffice has a value`() {
+    it("returns the correct header map when isbackoffice has a value") {
         withTestApplication {
 
             handleRequest(HttpMethod.Get, "/proxy-headers"){
@@ -80,8 +74,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when miauserproperties has a value`() {
+    it("returns the correct header map when miauserproperties has a value") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("miauserproperties", "property")
@@ -91,8 +84,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the correct header map when all platform headers have value`() {
+    it("returns the correct header map when all platform headers have value") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("x-request-id", "1234abcd")
@@ -116,8 +108,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the header map with only headers to proxy when there are more`() {
+    it("returns the header map with only headers to proxy when there are more") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("x-request-id", "1234abcd")
@@ -142,8 +133,7 @@ class HeadersToProxyTest {
         }
     }
 
-    @Test
-    fun `Returns the header map with additional headers to proxy if present`() {
+    it("returns the header map with additional headers to proxy if present") {
         withTestApplication {
             handleRequest(HttpMethod.Get, "/proxy-headers"){
                 addHeader("x-request-id", "1234abcd")
@@ -170,4 +160,4 @@ class HeadersToProxyTest {
             }
         }
     }
-}
+})

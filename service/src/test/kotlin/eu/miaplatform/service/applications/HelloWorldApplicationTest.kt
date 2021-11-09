@@ -24,7 +24,6 @@ import org.slf4j.event.Level
  * End-to-end tests.
  * You could test separately endpoints and logic in two different test classes.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HelloWorldApplicationTest : DescribeSpec({
 
     val objectMapper = ObjectMapper().apply {
