@@ -11,6 +11,8 @@ plugins {
     id('nebula.lint') version "17.1.0"
 }
 
+version '0.2.3'
+
 // Do not add dependencies here! Bad practice
 allprojects {
     group 'eu.miaplatform'
