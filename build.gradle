@@ -11,7 +11,8 @@ plugins {
     id('nebula.lint') version "17.1.0"
 }
 
-version '0.2.3'
+// Do not delete, this will get updated automatically when running the version command
+version '0.0.1'
 
 // Do not add dependencies here! Bad practice
 allprojects {
@@ -50,7 +51,7 @@ class UpdateVersion extends DefaultTask {
         getLogger().quiet("Updating files to version $tag")
         String oldTag = project.version
 
-        getLogger().quiet("Updating build.gradle file")
+        getLogger().quiet("Updating build.gradle file, updating from version $oldTag to $tag")
         String updatedBuildGradle = project.buildFile.getText().replaceFirst("version '$oldTag'", "version '$tag'")
         project.buildFile.setText(updatedBuildGradle)
 
