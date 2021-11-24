@@ -40,8 +40,9 @@ task generateVersionProperties {
         def propsFile = file "$generatedVersionDir/version.properties"
         propsFile.parentFile.mkdirs()
         def props = new Properties()
-        print(rootProject.version.toString())
-        props.setProperty("version", rootProject.version.toString())
+        def projectVersion = rootProject.version.toString()
+        print("Project version: ${projectVersion}")
+        props.setProperty("version", projectVersion)
         propsFile.withWriter { props.store(it, null) }
     }
 }
