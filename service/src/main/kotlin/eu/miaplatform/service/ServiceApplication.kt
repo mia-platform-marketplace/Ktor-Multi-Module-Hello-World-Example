@@ -40,14 +40,6 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
 
-    val logLevel = when (environment.config.property("ktor.log.level").getString().uppercase()) {
-        "DEBUG" -> Level.DEBUG
-        "ERROR" -> Level.ERROR
-        "TRACE" -> Level.TRACE
-        "WARN" -> Level.WARN
-        else -> Level.INFO
-    }
-
     val httpLogLevel = when (environment.config.property("ktor.log.httpLogLevel").getString().uppercase()) {
         "BASIC" -> HttpLoggingInterceptor.Level.BASIC
         "BODY" -> HttpLoggingInterceptor.Level.BODY
@@ -62,7 +54,7 @@ fun Application.module() {
         logLevel = httpLogLevel
     )
 
-    baseModule(logLevel)
+    baseModule()
     val helloWorldService = HelloWorldService(crudClient)
     install(HelloWorldApplication(additionalHeadersToProxy, helloWorldService))
     install(DocumentationApplication())
@@ -73,11 +65,9 @@ fun Application.module() {
 /**
  * Install common functionalities like open api, logging, metrics, serialization, etc. for this application.
  */
-fun Application.baseModule(
-    logLevel: Level
-) {
+fun Application.baseModule() {
     install(CallLogging) {
-        level = logLevel
+        level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
     }
 
@@ -136,7 +126,6 @@ fun Application.baseModule(
             exception<Exception, ErrorResponse>(HttpStatusCode.InternalServerError) {
                 ErrorResponse(1000, it.localizedMessage ?: "Generic error")
             }
-
         }
     }
 

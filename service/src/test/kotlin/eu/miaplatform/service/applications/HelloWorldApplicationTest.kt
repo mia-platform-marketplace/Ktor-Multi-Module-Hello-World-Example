@@ -40,7 +40,7 @@ class HelloWorldApplicationTest : DescribeSpec({
         describe("get") {
             it("should return success object message") {
                 withTestApplication({
-                    baseModule(Level.DEBUG)
+                    baseModule()
                     install(HelloWorldApplication("", service))
                 }) {
                     handleRequest(HttpMethod.Get, "/hello") {
@@ -61,7 +61,7 @@ class HelloWorldApplicationTest : DescribeSpec({
 
             it("should return success object message with query parameter") {
                 withTestApplication({
-                    baseModule(Level.DEBUG)
+                    baseModule()
                     install(HelloWorldApplication("", service))
                 }) {
                     handleRequest(HttpMethod.Get, "/hello?queryParam=param") {
@@ -85,7 +85,7 @@ class HelloWorldApplicationTest : DescribeSpec({
             describe("post") {
                 it("should return success object message with path param") {
                     withTestApplication({
-                        baseModule(Level.DEBUG)
+                        baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
                         val body = objectMapper.writeValueAsString(
@@ -112,7 +112,7 @@ class HelloWorldApplicationTest : DescribeSpec({
 
                 it("should return bad request if body is malformed") {
                     withTestApplication({
-                        baseModule(Level.DEBUG)
+                        baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
                         val body = objectMapper.writeValueAsString(
@@ -143,7 +143,7 @@ class HelloWorldApplicationTest : DescribeSpec({
                         .returns(listOf("book1", "book2"))
 
                     withTestApplication({
-                        baseModule(Level.DEBUG)
+                        baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call") {
@@ -167,7 +167,7 @@ class HelloWorldApplicationTest : DescribeSpec({
                         .throws(Exception("some error occurred"))
 
                     withTestApplication({
-                        baseModule(Level.DEBUG)
+                        baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call") {
@@ -187,7 +187,7 @@ class HelloWorldApplicationTest : DescribeSpec({
                         .returns(listOf("book1", "book2"))
 
                     withTestApplication({
-                        baseModule(Level.DEBUG)
+                        baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
                         handleRequest(HttpMethod.Get, "/hello/with-call?queryParam=param") {

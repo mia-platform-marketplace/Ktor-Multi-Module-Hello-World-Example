@@ -35,7 +35,7 @@ dependencyResolutionManagement {
             bundle('testImpl-ktor', ['ktor-server-tests'])
 
             // logback
-            alias('logback-classic').to('ch.qos.logback','logback-classic').version('1.2.3')
+            alias('logback-classic').to('ch.qos.logback','logback-classic').version('1.2.7')
             alias('logback-encoder').to('net.logstash.logback','logstash-logback-encoder').version('6.0')
             bundle('impl-logback', ['logback-classic','logback-encoder'])
 

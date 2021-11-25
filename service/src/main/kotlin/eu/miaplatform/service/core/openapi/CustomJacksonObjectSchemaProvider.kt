@@ -37,9 +37,7 @@ object CustomJacksonObjectSchemaProvider : SchemaBuilderProviderModule, OpenAPIG
     }
 
     private class Builder(private val apiGen: OpenAPIGen, private val namer: SchemaNamer) : SchemaBuilder {
-        @ExperimentalStdlibApi
         inline fun <reified T> getKType() = typeOf<T>()
-        @ExperimentalStdlibApi
         override val superType: KType = getKType<Any?>()
 
         private val refs = HashMap<KType, SchemaModel.SchemaModelRef<*>>()

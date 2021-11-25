@@ -22,7 +22,7 @@ class HealthApplicationTest : DescribeSpec ({
     describe("/-/health") {
         it("should return OK") {
             withTestApplication({
-                baseModule(Level.DEBUG)
+                baseModule()
                 install(HealthApplication())
             }) {
                 handleRequest(HttpMethod.Get, "/-/healthz").apply {
@@ -40,7 +40,7 @@ class HealthApplicationTest : DescribeSpec ({
     describe("/-/ready") {
         it("should return OK") {
             withTestApplication({
-                baseModule(Level.DEBUG)
+                baseModule()
                 install(HealthApplication())
             }) {
                 handleRequest(HttpMethod.Get, "/-/ready").apply {
@@ -58,7 +58,7 @@ class HealthApplicationTest : DescribeSpec ({
     describe("/-/check-up") {
         it("should return OK") {
             withTestApplication({
-                baseModule(Level.DEBUG)
+                baseModule()
                 install(HealthApplication())
             }) {
                 handleRequest(HttpMethod.Get, "/-/check-up").apply {
