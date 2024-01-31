@@ -8,7 +8,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven { url 'https://jitpack.io' } // for papsign ktor open api generator
+//        maven { url 'https://jitpack.io' } // for papsign ktor open api generator
     }
 
     versionCatalogs {
@@ -28,14 +28,27 @@ dependencyResolutionManagement {
             alias('ktor-netty').to('io.ktor','ktor-server-netty').versionRef('ktor')
             alias('ktor-server-core').to('io.ktor','ktor-server-core').versionRef('ktor')
             alias('ktor-client-core').to('io.ktor','ktor-client-core-jvm').versionRef('ktor')
-            alias('ktor-jackson').to('io.ktor','ktor-jackson').versionRef('ktor')
-            alias('ktor-openapi').to('com.github.papsign','Ktor-OpenAPI-Generator').version('0.2-beta.20')
-            bundle('impl-ktor', ['ktor-netty','ktor-server-core','ktor-client-core','ktor-jackson','ktor-openapi'])
+            alias('ktor-logging').to('io.ktor','ktor-server-call-logging').versionRef('ktor')
+            alias('ktor-content-negotiation').to('io.ktor','ktor-server-content-negotiation').versionRef('ktor')
+            alias('ktor-jackson').to('io.ktor','ktor-serialization-jackson').versionRef('ktor')
+            alias('ktor-openapi').to('dev.forst','ktor-openapi-generator').version('0.6.1')
+            bundle(
+                    'impl-ktor',
+                    [
+                            'ktor-netty',
+                            'ktor-server-core',
+                            'ktor-client-core',
+                            'ktor-logging',
+                            'ktor-content-negotiation',
+                            'ktor-jackson',
+                            'ktor-openapi'
+                    ]
+            )
             alias('ktor-server-tests').to('io.ktor','ktor-server-tests').versionRef('ktor')
             bundle('testImpl-ktor', ['ktor-server-tests'])
 
             // logback
-            alias('logback-classic').to('ch.qos.logback','logback-classic').version('1.2.7')
+            alias('logback-classic').to('ch.qos.logback','logback-classic').version('1.4.14')
             alias('logback-encoder').to('net.logstash.logback','logstash-logback-encoder').version('6.0')
             bundle('impl-logback', ['logback-classic','logback-encoder'])
 

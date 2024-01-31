@@ -1,10 +1,7 @@
 package eu.miaplatform.service
 
 import ch.qos.logback.classic.util.ContextInitializer
-import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.papsign.ktor.openapigen.OpenAPIGen
-import com.papsign.ktor.openapigen.interop.withAPI
 import com.papsign.ktor.openapigen.schema.builder.provider.DefaultObjectSchemaProvider
 import com.papsign.ktor.openapigen.schema.namer.DefaultSchemaNamer
 import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
@@ -13,24 +10,19 @@ import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.commons.ktor.install
-import eu.miaplatform.commons.model.BadRequestException
-import eu.miaplatform.commons.model.InternalServerErrorException
-import eu.miaplatform.commons.model.NotFoundException
-import eu.miaplatform.commons.model.UnauthorizedException
-import eu.miaplatform.service.applications.*
+import eu.miaplatform.service.applications.DocumentationApplication
+import eu.miaplatform.service.applications.HealthApplication
 import eu.miaplatform.service.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.services.HelloWorldService
 import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
-import eu.miaplatform.service.model.ErrorResponse
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.request.*
+import eu.miaplatform.service.services.HelloWorldService
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.slf4j.event.Level
-import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KType
 
 fun main(args: Array<String>) {
@@ -68,7 +60,9 @@ fun Application.module() {
 fun Application.baseModule() {
     install(CallLogging) {
         level = Level.INFO
-        filter { call -> call.request.path().startsWith("/") }
+        disableDefaultColors()
+        // don't log calls to health
+        filter { call -> !call.request.path().startsWith("/-/") }
     }
 
     // Documentation here: https://github.com/papsign/Ktor-OpenAPI-Generator
@@ -100,38 +94,38 @@ fun Application.baseModule() {
         replaceModule(DefaultObjectSchemaProvider, CustomJacksonObjectSchemaProvider)
     }
 
-    install(StatusPages) {
-        withAPI(api) {
-            exception<UnauthorizedException, ErrorResponse>(HttpStatusCode.Unauthorized) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<NotFoundException, ErrorResponse>(HttpStatusCode.NotFound) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<BadRequestException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<MissingKotlinParameterException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.localizedMessage)
-            }
-            exception<InvocationTargetException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.targetException.localizedMessage)
-            }
-            exception<InvalidFormatException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.localizedMessage)
-            }
-            exception<InternalServerErrorException, ErrorResponse>(HttpStatusCode.InternalServerError) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<Exception, ErrorResponse>(HttpStatusCode.InternalServerError) {
-                ErrorResponse(1000, it.localizedMessage ?: "Generic error")
-            }
-        }
-    }
-
     install(ContentNegotiation) {
         jackson {
             Serialization.apply { defaultKtorLiteral() }
         }
     }
+
+//    install() {
+//        withAPI(api) {
+//            exception<UnauthorizedException, ErrorResponse>(HttpStatusCode.Unauthorized) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<NotFoundException, ErrorResponse>(HttpStatusCode.NotFound) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<BadRequestException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<MissingKotlinParameterException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.localizedMessage)
+//            }
+//            exception<InvocationTargetException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.targetException.localizedMessage)
+//            }
+//            exception<InvalidFormatException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.localizedMessage)
+//            }
+//            exception<InternalServerErrorException, ErrorResponse>(HttpStatusCode.InternalServerError) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<Exception, ErrorResponse>(HttpStatusCode.InternalServerError) {
+//                ErrorResponse(1000, it.localizedMessage ?: "Generic error")
+//            }
+//        }
+//    }
 }

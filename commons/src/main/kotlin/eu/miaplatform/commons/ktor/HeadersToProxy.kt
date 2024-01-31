@@ -1,6 +1,7 @@
 package eu.miaplatform.commons.ktor
 
-import io.ktor.application.*
+import io.ktor.server.application.*
+
 
 fun ApplicationCall.headersToProxy(additionalHeaderToProxy: String = ""): Map<String, String> {
     val requestIdHeaderKey = "x-request-id"

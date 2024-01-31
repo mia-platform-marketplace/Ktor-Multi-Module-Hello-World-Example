@@ -2,9 +2,9 @@ package eu.miaplatform.service.applications
 
 import com.papsign.ktor.openapigen.openAPIGen
 import eu.miaplatform.commons.ktor.CustomApplication
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 class DocumentationApplication : CustomApplication {
     override fun install(routing: Routing): Unit = routing.run {
