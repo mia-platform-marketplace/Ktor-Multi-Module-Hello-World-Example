@@ -3,8 +3,6 @@ rootProject.name = 'ktor-gradle-template'
 include('commons')
 include('service')
 
-enableFeaturePreview("VERSION_CATALOGS")
-
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
@@ -14,24 +12,24 @@ dependencyResolutionManagement {
         libs {
             // junit5
             version('junit-jupiter', junit_version.toString())
-            alias('mockk').to('io.mockk','mockk').version('1.12.0')
-            alias('assertk').to('com.willowtreeapps.assertk','assertk-jvm').version('0.24')
-            alias('kotest').to('io.kotest','kotest-runner-junit5').version('5.8.0')
-            alias('junit-jupiter-api').to('org.junit.jupiter','junit-jupiter-api').versionRef('junit-jupiter')
-            alias('junit-jupiter-engine').to('org.junit.jupiter','junit-jupiter-engine').versionRef('junit-jupiter')
-            alias('junit-jupiter-params').to('org.junit.jupiter','junit-jupiter-params').versionRef('junit-jupiter')
+            library('mockk', 'io.mockk:mockk:1.12.0')
+            library('assertk', 'com.willowtreeapps.assertk:assertk-jvm:0.24')
+            library('kotest', 'io.kotest:kotest-runner-junit5:5.8.0')
+            library('junit-jupiter-api', 'org.junit.jupiter', 'junit-jupiter-api').versionRef('junit-jupiter')
+            library('junit-jupiter-engine', 'org.junit.jupiter', 'junit-jupiter-engine').versionRef('junit-jupiter')
+            library('junit-jupiter-params', 'org.junit.jupiter', 'junit-jupiter-params').versionRef('junit-jupiter')
             bundle('testImpl-testSuite', ['junit-jupiter-api', 'junit-jupiter-engine', 'junit-jupiter-params', 'mockk', 'assertk', 'kotest'])
 
             // ktor
             version('ktor', ktor_version.toString())
-            alias('ktor-netty').to('io.ktor','ktor-server-netty').versionRef('ktor')
-            alias('ktor-server-core').to('io.ktor','ktor-server-core').versionRef('ktor')
-            alias('ktor-client-core').to('io.ktor','ktor-client-core-jvm').versionRef('ktor')
-            alias('ktor-logging').to('io.ktor','ktor-server-call-logging').versionRef('ktor')
-            alias('ktor-content-negotiation').to('io.ktor','ktor-server-content-negotiation').versionRef('ktor')
-            alias('ktor-jackson').to('io.ktor','ktor-serialization-jackson').versionRef('ktor')
-            alias('ktor-status-pages').to('io.ktor','ktor-server-status-pages').versionRef('ktor')
-            alias('ktor-openapi').to('dev.forst','ktor-openapi-generator').version('0.6.1')
+            library('ktor-netty', 'io.ktor', 'ktor-server-netty').versionRef('ktor')
+            library('ktor-server-core', 'io.ktor', 'ktor-server-core').versionRef('ktor')
+            library('ktor-client-core', 'io.ktor', 'ktor-client-core-jvm').versionRef('ktor')
+            library('ktor-logging', 'io.ktor', 'ktor-server-call-logging').versionRef('ktor')
+            library('ktor-content-negotiation', 'io.ktor', 'ktor-server-content-negotiation').versionRef('ktor')
+            library('ktor-jackson', 'io.ktor', 'ktor-serialization-jackson').versionRef('ktor')
+            library('ktor-status-pages', 'io.ktor', 'ktor-server-status-pages').versionRef('ktor')
+            library('ktor-openapi', 'dev.forst:ktor-openapi-generator:0.6.1')
             bundle(
                     'impl-ktor',
                     [
@@ -45,25 +43,25 @@ dependencyResolutionManagement {
                             'ktor-openapi'
                     ]
             )
-            alias('ktor-server-tests').to('io.ktor','ktor-server-tests').versionRef('ktor')
+            library('ktor-server-tests', 'io.ktor', 'ktor-server-tests').versionRef('ktor')
             bundle('testImpl-ktor', ['ktor-server-tests'])
 
             // logback
-            alias('logback-classic').to('ch.qos.logback','logback-classic').version('1.4.14')
-            alias('logback-encoder').to('net.logstash.logback','logstash-logback-encoder').version('6.0')
+            library('logback-classic', 'ch.qos.logback:logback-classic:1.4.14')
+            library('logback-encoder', 'net.logstash.logback:logstash-logback-encoder:6.0')
             bundle('impl-logback', ['logback-classic','logback-encoder'])
 
             // jackson
             version('jackson', jackson_version.toString())
-            alias('jackson-databind').to('com.fasterxml.jackson.core','jackson-databind').versionRef('jackson')
-            alias('jackson-kotlin').to('com.fasterxml.jackson.module','jackson-module-kotlin').versionRef('jackson')
-            alias('jackson-datatype').to('com.fasterxml.jackson.datatype','jackson-datatype-jsr310').versionRef('jackson')
-            bundle('impl-jackson',['jackson-databind','jackson-kotlin','jackson-datatype'])
+            library('jackson-databind', 'com.fasterxml.jackson.core', 'jackson-databind').versionRef('jackson')
+            library('jackson-kotlin', 'com.fasterxml.jackson.module', 'jackson-module-kotlin').versionRef('jackson')
+            library('jackson-datatype', 'com.fasterxml.jackson.datatype', 'jackson-datatype-jsr310').versionRef('jackson')
+            bundle('impl-jackson',['jackson-databind','jackson-kotlin', 'jackson-datatype'])
 
             // retrofit
             version('retrofit', retrofit_version.toString())
-            alias('retrofit-retrofit').to('com.squareup.retrofit2','retrofit').versionRef('retrofit')
-            alias('retrofit-converter-jackson').to('com.squareup.retrofit2','converter-jackson').versionRef('retrofit')
+            library('retrofit-retrofit', 'com.squareup.retrofit2', 'retrofit').versionRef('retrofit')
+            library('retrofit-converter-jackson', 'com.squareup.retrofit2', 'converter-jackson').versionRef('retrofit')
             bundle('impl-retrofit',['retrofit-retrofit','retrofit-converter-jackson'])
         }
     }
