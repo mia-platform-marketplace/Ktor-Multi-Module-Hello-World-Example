@@ -1,17 +1,15 @@
 package eu.miaplatform.service.model.response
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.time.Instant
+import java.time.LocalDate
 
 data class HelloWorldResponse (
-    @JsonProperty("pathParamSent")
-    @get:JsonProperty("pathParamSent")
     val pathParam: String?,
-
-    @JsonProperty("queryParamSent")
-    @get:JsonProperty("queryParamSent")
     val queryParam: String?,
-
-    @JsonProperty("helloWorld")
-    @get:JsonProperty("helloWorld")
-    val helloWorld: String?
+    val helloWorld: String?,
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val localDate: LocalDate = LocalDate.now(),
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "UTC")
+    val instant: Instant = Instant.now(),
 )

@@ -2,15 +2,16 @@ package eu.miaplatform.commons
 
 import java.util.*
 
-class StatusService {
-    private val versionProperties = Properties()
-
-    init {
+object StatusService {
+    private val versionProperties = Properties().apply {
         try {
-            versionProperties.load(this.javaClass.getResourceAsStream("/version.properties"))
-        } catch (e: Exception) {}
+            load(javaClass.getResourceAsStream("/gradle.properties"))
+        } catch (e: Exception) {
+            println(e.localizedMessage)
+        }
     }
 
-    fun getVersion() : String = versionProperties.getProperty("version") ?: "no version"
-
+    fun getVersion() : String {
+        return versionProperties.getProperty("version") ?: "no version"
+    }
 }

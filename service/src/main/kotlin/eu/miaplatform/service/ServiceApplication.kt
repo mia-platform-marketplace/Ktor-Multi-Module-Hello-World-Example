@@ -1,37 +1,36 @@
 package eu.miaplatform.service
 
 import ch.qos.logback.classic.util.ContextInitializer
-import com.fasterxml.jackson.databind.exc.InvalidFormatException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
-import com.papsign.ktor.openapigen.OpenAPIGen
-import com.papsign.ktor.openapigen.interop.withAPI
-import com.papsign.ktor.openapigen.schema.builder.provider.DefaultObjectSchemaProvider
-import com.papsign.ktor.openapigen.schema.namer.DefaultSchemaNamer
-import com.papsign.ktor.openapigen.schema.namer.SchemaNamer
 import eu.miaplatform.commons.Serialization
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.RetrofitClient
 import eu.miaplatform.commons.ktor.install
-import eu.miaplatform.commons.model.BadRequestException
-import eu.miaplatform.commons.model.InternalServerErrorException
-import eu.miaplatform.commons.model.NotFoundException
-import eu.miaplatform.commons.model.UnauthorizedException
-import eu.miaplatform.service.applications.*
+import eu.miaplatform.service.applications.HealthApplication
 import eu.miaplatform.service.applications.helloworld.HelloWorldApplication
 import eu.miaplatform.service.services.HelloWorldService
-import eu.miaplatform.service.core.openapi.CustomJacksonObjectSchemaProvider
-import eu.miaplatform.service.model.ErrorResponse
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.request.*
+import io.bkbn.kompendium.core.plugin.NotarizedApplication
+import io.bkbn.kompendium.core.routes.redoc
+import io.bkbn.kompendium.core.routes.swagger
+import io.bkbn.kompendium.json.schema.KotlinXSchemaConfigurator
+import io.bkbn.kompendium.json.schema.definition.TypeDefinition
+import io.bkbn.kompendium.oas.OpenApiSpec
+import io.bkbn.kompendium.oas.info.Info
+import io.ktor.serialization.jackson.*
+import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.slf4j.event.Level
-import java.lang.reflect.InvocationTargetException
-import kotlin.reflect.KType
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import kotlin.reflect.typeOf
 
 fun main(args: Array<String>) {
     System.setProperty(ContextInitializer.CONFIG_FILE_PROPERTY, System.getenv("LOG_CONFIG_FILE"))
@@ -57,7 +56,6 @@ fun Application.module() {
     baseModule()
     val helloWorldService = HelloWorldService(crudClient)
     install(HelloWorldApplication(additionalHeadersToProxy, helloWorldService))
-    install(DocumentationApplication())
     install(HealthApplication())
 }
 
@@ -68,65 +66,8 @@ fun Application.module() {
 fun Application.baseModule() {
     install(CallLogging) {
         level = Level.INFO
-        filter { call -> call.request.path().startsWith("/") }
-    }
-
-    // Documentation here: https://github.com/papsign/Ktor-OpenAPI-Generator
-    val api = install(OpenAPIGen) {
-        info {
-            version = StatusService().getVersion()
-            title = "Service name"
-            description = "The service description"
-            contact {
-                name = "Name of the contact"
-                email = "contact@email.com"
-            }
-        }
-        server("https://test.host/") {
-            description = "Test environment"
-        }
-        server("https://preprod.host/") {
-            description = "Preproduction environment"
-        }
-        server("https://cloud.host/") {
-            description = "Production environment"
-        }
-        replaceModule(DefaultSchemaNamer, object: SchemaNamer {
-            val regex = Regex("[A-Za-z0-9_.]+")
-            override fun get(type: KType): String {
-                return type.toString().replace(regex) { it.value.split(".").last() }.replace(Regex(">|<|, "), "_")
-            }
-        })
-        replaceModule(DefaultObjectSchemaProvider, CustomJacksonObjectSchemaProvider)
-    }
-
-    install(StatusPages) {
-        withAPI(api) {
-            exception<UnauthorizedException, ErrorResponse>(HttpStatusCode.Unauthorized) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<NotFoundException, ErrorResponse>(HttpStatusCode.NotFound) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<BadRequestException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<MissingKotlinParameterException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.localizedMessage)
-            }
-            exception<InvocationTargetException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.targetException.localizedMessage)
-            }
-            exception<InvalidFormatException, ErrorResponse>(HttpStatusCode.BadRequest) {
-                ErrorResponse(1000, it.localizedMessage)
-            }
-            exception<InternalServerErrorException, ErrorResponse>(HttpStatusCode.InternalServerError) {
-                ErrorResponse(it.code, it.errorMessage)
-            }
-            exception<Exception, ErrorResponse>(HttpStatusCode.InternalServerError) {
-                ErrorResponse(1000, it.localizedMessage ?: "Generic error")
-            }
-        }
+        disableDefaultColors()
+        filter { call -> !call.request.path().startsWith("/-/") }
     }
 
     install(ContentNegotiation) {
@@ -134,4 +75,67 @@ fun Application.baseModule() {
             Serialization.apply { defaultKtorLiteral() }
         }
     }
+
+    install(NotarizedApplication()) {
+        spec = {
+            OpenApiSpec(
+                info = Info(
+                    title = "Hello World",
+                    version = StatusService.getVersion(),
+                    summary = "An introductory Hello World service"
+                )
+            )
+        }
+        this.schemaConfigurator = KotlinXSchemaConfigurator()
+        specRoute = { spec, routing ->
+            routing {
+                route("/documentation") {
+                    get("/openapi.json") {
+                        spec.openapi
+                        call.respond(spec)
+                    }
+                    // exposed under /swagger-ui
+                    swagger("Service documentation", specUrl = "/documentation/openapi.json")
+                    // exposed under /docs
+                    redoc("Service documentation", specUrl = "/documentation/openapi.json")
+                }
+            }
+        }
+        customTypes = mapOf(
+            typeOf<Instant>() to TypeDefinition(type = "string", format = "date-time"),
+            typeOf<LocalDate>() to TypeDefinition(type = "string", format = "date"),
+            typeOf<LocalTime>() to TypeDefinition(type = "string", format = "time"),
+            typeOf<LocalDateTime>() to TypeDefinition(type = "string", format = "local-date-time"),
+        )
+    }
+
+//    install(StatusPages) {
+//        withAPI(api) {
+//            exception<UnauthorizedException, ErrorResponse>(HttpStatusCode.Unauthorized) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<NotFoundException, ErrorResponse>(HttpStatusCode.NotFound) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<BadRequestException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<MissingKotlinParameterException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.localizedMessage)
+//            }
+//            exception<InvocationTargetException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.targetException.localizedMessage)
+//            }
+//            exception<InvalidFormatException, ErrorResponse>(HttpStatusCode.BadRequest) {
+//                ErrorResponse(1000, it.localizedMessage)
+//            }
+//            exception<InternalServerErrorException, ErrorResponse>(HttpStatusCode.InternalServerError) {
+//                ErrorResponse(it.code, it.errorMessage)
+//            }
+//            exception<Exception, ErrorResponse>(HttpStatusCode.InternalServerError) {
+//                ErrorResponse(1000, it.localizedMessage ?: "Generic error")
+//            }
+//        }
+//    }
+
 }

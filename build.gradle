@@ -32,57 +32,37 @@ subprojects {
         }
 
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "17"
         }
         tasks.withType(JavaCompile).configureEach {
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
+            sourceCompatibility = "17"
+            targetCompatibility = "17"
         }
     }
 }
 
-class UpdateVersion extends DefaultTask {
-    private String tag
+// RUN SCRIPT ./gradlew version -PnewVersion=[version]
+task version {
+    doLast {
+        File gradleProperties = new File("gradle.properties")
+        String gradlePropertiesText = gradleProperties.text
+        String versionText = gradlePropertiesText.replaceFirst("version=$version", "version=$newVersion")
+        gradleProperties.write(versionText)
 
-    @Option(option = "tag", description = "Updates the project version with specified tag (when supplying the tag do not include the initial v).")
-    void setTag(String tag) {
-        this.tag = tag
-    }
-
-    @Input
-    String getTag() {
-        return tag
-    }
-
-    @TaskAction
-    void print() {
-        getLogger().quiet("Updating files to version $tag")
-        String oldTag = project.version
-
-        getLogger().quiet("Updating build.gradle file, updating from version $oldTag to $tag")
-        String updatedBuildGradle = project.buildFile.getText().replaceFirst("version '$oldTag'", "version '$tag'")
-        project.buildFile.setText(updatedBuildGradle)
-
-        getLogger().quiet("Updating Changelog and Dockerfile")
-        runCommand("./scripts/update-changelog.sh", tag)
-
-        getLogger().quiet("Commit and tag creation on local repository")
-        String tagName = "v${tag}"
-        runCommand("git", "commit", "-a", "-m", tagName)
-        runCommand("git", "tag", tagName)
-    }
-
-    static String runCommand(String... commands) {
-        Process process = new ProcessBuilder(commands).redirectErrorStream(true).start()
-        process.waitFor()
-        String result = ''
-        process.inputStream.eachLine { result += it + '\n' }
-        boolean error = process.exitValue() != 0
-        if (error) {
-            println(result)
-        }
-        return result
+        String tagName = "v${newVersion}"
+        runCommands("git", "commit", "-a", "-m", tagName)
+        runCommands("git", "tag", newVersion)
     }
 }
-//to execute the task: ./gradlew version --tag=[version]
-task version(type: UpdateVersion)
+
+private static String runCommands(String... commands) {
+    Process process = new ProcessBuilder(commands).redirectErrorStream(true).start()
+    process.waitFor()
+    String result = ''
+    process.inputStream.eachLine { result += it + '\n' }
+    boolean error = process.exitValue() != 0
+    if (error) {
+        println(result)
+    }
+    return result
+}

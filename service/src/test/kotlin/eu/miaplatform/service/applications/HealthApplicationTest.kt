@@ -28,7 +28,7 @@ class HealthApplicationTest : DescribeSpec ({
                 handleRequest(HttpMethod.Get, "/-/healthz").apply {
                     assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                    val version = StatusService().getVersion()
+                    val version = StatusService.getVersion()
                     val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
                     val expectedRes = HealthBodyResponse("service-api", version, HealthBodyResponse.Status.OK.value)
                     assertThat(body).isEqualTo(expectedRes)
@@ -46,7 +46,7 @@ class HealthApplicationTest : DescribeSpec ({
                 handleRequest(HttpMethod.Get, "/-/ready").apply {
                     assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                    val version = StatusService().getVersion()
+                    val version = StatusService.getVersion()
                     val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
                     val expectedRes = HealthBodyResponse("service-api", version, HealthBodyResponse.Status.OK.value)
                     assertThat(body).isEqualTo(expectedRes)
@@ -64,7 +64,7 @@ class HealthApplicationTest : DescribeSpec ({
                 handleRequest(HttpMethod.Get, "/-/check-up").apply {
                     assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                    val version = StatusService().getVersion()
+                    val version = StatusService.getVersion()
                     val body = objectMapper.readValue(response.content, HealthBodyResponse::class.java)
                     val expectedRes = HealthBodyResponse("service-api", version, HealthBodyResponse.Status.OK.value)
                     assertThat(body).isEqualTo(expectedRes)
