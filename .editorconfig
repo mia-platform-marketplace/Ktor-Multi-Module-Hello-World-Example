@@ -1,4 +1,5 @@
 root = true
 
-[*]
+# https://pinterest.github.io/ktlint/dev-snapshot/rules/configuration-ktlint/
+[*.{kt,kts}]
 ktlint_standard_no-wildcard-imports = disabled
