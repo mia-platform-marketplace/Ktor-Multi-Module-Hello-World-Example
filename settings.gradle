@@ -8,7 +8,6 @@ enableFeaturePreview("VERSION_CATALOGS")
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-//        maven { url 'https://jitpack.io' } // for papsign ktor open api generator
     }
 
     versionCatalogs {
@@ -17,7 +16,7 @@ dependencyResolutionManagement {
             version('junit-jupiter', junit_version.toString())
             alias('mockk').to('io.mockk','mockk').version('1.12.0')
             alias('assertk').to('com.willowtreeapps.assertk','assertk-jvm').version('0.24')
-            alias('kotest').to('io.kotest','kotest-runner-junit5').version('5.0.0.M3')
+            alias('kotest').to('io.kotest','kotest-runner-junit5').version('5.8.0')
             alias('junit-jupiter-api').to('org.junit.jupiter','junit-jupiter-api').versionRef('junit-jupiter')
             alias('junit-jupiter-engine').to('org.junit.jupiter','junit-jupiter-engine').versionRef('junit-jupiter')
             alias('junit-jupiter-params').to('org.junit.jupiter','junit-jupiter-params').versionRef('junit-jupiter')
@@ -31,6 +30,7 @@ dependencyResolutionManagement {
             alias('ktor-logging').to('io.ktor','ktor-server-call-logging').versionRef('ktor')
             alias('ktor-content-negotiation').to('io.ktor','ktor-server-content-negotiation').versionRef('ktor')
             alias('ktor-jackson').to('io.ktor','ktor-serialization-jackson').versionRef('ktor')
+            alias('ktor-status-pages').to('io.ktor','ktor-server-status-pages').versionRef('ktor')
             alias('ktor-openapi').to('dev.forst','ktor-openapi-generator').version('0.6.1')
             bundle(
                     'impl-ktor',
@@ -41,6 +41,7 @@ dependencyResolutionManagement {
                             'ktor-logging',
                             'ktor-content-negotiation',
                             'ktor-jackson',
+                            'ktor-status-pages',
                             'ktor-openapi'
                     ]
             )
