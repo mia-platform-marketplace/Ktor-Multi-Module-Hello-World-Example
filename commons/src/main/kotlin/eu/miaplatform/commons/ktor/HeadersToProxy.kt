@@ -2,7 +2,6 @@ package eu.miaplatform.commons.ktor
 
 import io.ktor.server.application.*
 
-
 fun ApplicationCall.headersToProxy(additionalHeaderToProxy: String = ""): Map<String, String> {
     val requestIdHeaderKey = "x-request-id"
     val userIdHeaderKey = System.getenv("USERID_HEADER_KEY") ?: "miauserid"
@@ -23,7 +22,7 @@ fun ApplicationCall.headersToProxy(additionalHeaderToProxy: String = ""): Map<St
     additionalHeaderToProxy.split(",").forEach { key ->
         val headerValue = request.headers[key]
         headerValue?.let { header ->
-            headers[key] =  header
+            headers[key] = header
         }
     }
 

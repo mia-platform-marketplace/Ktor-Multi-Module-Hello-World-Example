@@ -9,6 +9,7 @@ plugins {
     // Apply to all projects, used to check unused dependencies, run `./gradlew lintGradle` to check dependencies.
     // Be aware that automatic fixing with `fixLintGradle` might break something.
     id('nebula.lint') version "17.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
 }
 
 // Do not delete, this will get updated automatically when running the version command
@@ -22,6 +23,8 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+
     // setup junit5 and remove all api imports of junit 4
     configurations {
         implementation {

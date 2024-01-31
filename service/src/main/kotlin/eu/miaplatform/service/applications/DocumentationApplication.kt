@@ -7,14 +7,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 class DocumentationApplication : CustomApplication {
-    override fun install(routing: Routing): Unit = routing.run {
-        route("/documentation") {
-            get {
-                call.respondRedirect("/swagger-ui/index.html?url=/documentation/openapi.json", true)
-            }
-            get("/openapi.json") {
-                call.respond(application.openAPIGen.api.serialize())
+    override fun install(routing: Routing): Unit =
+        routing.run {
+            route("/documentation") {
+                get {
+                    call.respondRedirect("/swagger-ui/index.html?url=/documentation/openapi.json", true)
+                }
+                get("/openapi.json") {
+                    call.respond(application.openAPIGen.api.serialize())
+                }
             }
         }
-    }
 }

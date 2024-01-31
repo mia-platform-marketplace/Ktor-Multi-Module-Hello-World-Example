@@ -10,22 +10,23 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-
     inline fun <reified T> build(
         basePath: String,
         logLevel: HttpLoggingInterceptor.Level,
-        objectMapper: ObjectMapper = Serialization.defaultRetrofitMapper
+        objectMapper: ObjectMapper = Serialization.defaultRetrofitMapper,
     ): T {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = logLevel
-        }
+        val loggingInterceptor =
+            HttpLoggingInterceptor().apply {
+                level = logLevel
+            }
 
-        val client = OkHttpClient.Builder()
-            .callTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .addInterceptor(loggingInterceptor)
-            .build()
+        val client =
+            OkHttpClient.Builder()
+                .callTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(loggingInterceptor)
+                .build()
 
         return Retrofit.Builder()
             .baseUrl(basePath)

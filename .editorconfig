@@ -1,0 +1,4 @@
+root = true
+
+[*]
+ktlint_standard_no-wildcard-imports = disabled

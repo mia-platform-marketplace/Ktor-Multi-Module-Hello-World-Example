@@ -1,7 +1,6 @@
 package eu.miaplatform.service
 
 import ch.qos.logback.classic.ClassicConstants
-import ch.qos.logback.classic.util.ContextInitializer
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.papsign.ktor.openapigen.OpenAPIGen
@@ -43,20 +42,21 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-
-    val httpLogLevel = when (environment.config.property("ktor.log.httpLogLevel").getString().uppercase()) {
-        "BASIC" -> HttpLoggingInterceptor.Level.BASIC
-        "BODY" -> HttpLoggingInterceptor.Level.BODY
-        "HEADERS" -> HttpLoggingInterceptor.Level.HEADERS
-        else -> HttpLoggingInterceptor.Level.NONE
-    }
+    val httpLogLevel =
+        when (environment.config.property("ktor.log.httpLogLevel").getString().uppercase()) {
+            "BASIC" -> HttpLoggingInterceptor.Level.BASIC
+            "BODY" -> HttpLoggingInterceptor.Level.BODY
+            "HEADERS" -> HttpLoggingInterceptor.Level.HEADERS
+            else -> HttpLoggingInterceptor.Level.NONE
+        }
 
     val additionalHeadersToProxy = System.getenv("ADDITIONAL_HEADERS_TO_PROXY") ?: ""
 
-    val crudClient = RetrofitClient.build<CrudClientInterface>(
-        basePath = "http://crud-service/",
-        logLevel = httpLogLevel
-    )
+    val crudClient =
+        RetrofitClient.build<CrudClientInterface>(
+            basePath = "http://crud-service/",
+            logLevel = httpLogLevel,
+        )
 
     baseModule()
     val helloWorldService = HelloWorldService(crudClient)
@@ -70,10 +70,11 @@ fun Application.module() {
  */
 private fun customCallFormat(call: ApplicationCall): String =
     when (val status = call.response.status() ?: "Unhandled") {
-        HttpStatusCode.Found -> "${status as HttpStatusCode}: " +
+        HttpStatusCode.Found ->
+            "${status as HttpStatusCode}: " +
                 "${call.request.toLogString()} -> ${call.response.headers[HttpHeaders.Location]}"
 
-        "Unhandled" -> "${status}: ${call.request.toLogString()}"
+        "Unhandled" -> "$status: ${call.request.toLogString()}"
         else -> "${status as HttpStatusCode}: ${call.request.toLogString()}"
     }
 
@@ -90,33 +91,38 @@ fun Application.baseModule() {
     }
 
     // Documentation here: https://github.com/papsign/Ktor-OpenAPI-Generator
-    val api = install(OpenAPIGen) {
-        info {
-            version = StatusService().getVersion()
-            title = "Service name"
-            description = "The service description"
-            contact {
-                name = "Name of the contact"
-                email = "contact@email.com"
+    val api =
+        install(OpenAPIGen) {
+            info {
+                version = StatusService().getVersion()
+                title = "Service name"
+                description = "The service description"
+                contact {
+                    name = "Name of the contact"
+                    email = "contact@email.com"
+                }
             }
-        }
-        server("https://test.host/") {
-            description = "Test environment"
-        }
-        server("https://preprod.host/") {
-            description = "Preproduction environment"
-        }
-        server("https://cloud.host/") {
-            description = "Production environment"
-        }
-        replaceModule(DefaultSchemaNamer, object: SchemaNamer {
-            val regex = Regex("[A-Za-z0-9_.]+")
-            override fun get(type: KType): String {
-                return type.toString().replace(regex) { it.value.split(".").last() }.replace(Regex(">|<|, "), "_")
+            server("https://test.host/") {
+                description = "Test environment"
             }
-        })
-        replaceModule(DefaultObjectSchemaProvider, CustomJacksonObjectSchemaProvider)
-    }
+            server("https://preprod.host/") {
+                description = "Preproduction environment"
+            }
+            server("https://cloud.host/") {
+                description = "Production environment"
+            }
+            replaceModule(
+                DefaultSchemaNamer,
+                object : SchemaNamer {
+                    val regex = Regex("[A-Za-z0-9_.]+")
+
+                    override fun get(type: KType): String {
+                        return type.toString().replace(regex) { it.value.split(".").last() }.replace(Regex(">|<|, "), "_")
+                    }
+                },
+            )
+            replaceModule(DefaultObjectSchemaProvider, CustomJacksonObjectSchemaProvider)
+        }
 
     install(ContentNegotiation) {
         jackson {
