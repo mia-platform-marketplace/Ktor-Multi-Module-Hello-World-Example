@@ -2,17 +2,15 @@ package eu.miaplatform.commons.ktor
 
 import assertk.assertThat
 import assertk.assertions.*
-import eu.miaplatform.commons.ktor.headersToProxy
 import io.kotest.core.spec.style.DescribeSpec
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.jupiter.api.Test
 
-class HeadersToProxyTest : DescribeSpec ({
+class HeadersToProxyTest : DescribeSpec({
 
     it("returns empty header map when no header is present") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
             }.apply {
                 val headers = headersToProxy()
                 assertThat(mapOf<String, String>()).isEqualTo(headers)
@@ -22,7 +20,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the correct header map when x-request-id has a value") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("x-request-id", "1234abcd")
             }.apply {
                 val headers = headersToProxy()
@@ -33,7 +31,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the correct header map when miauserid has a value") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("miauserid", "userid")
             }.apply {
                 val headers = headersToProxy()
@@ -44,7 +42,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the correct header map when miausergroups has a value") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("miausergroups", "group")
             }.apply {
                 assertThat(headersToProxy()).isEqualTo(mapOf("miausergroups" to "group"))
@@ -55,7 +53,7 @@ class HeadersToProxyTest : DescribeSpec ({
     it("returns the correct header map when client-type has a value") {
         withTestApplication {
 
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("client-type", "type")
             }.apply {
                 assertThat(headersToProxy()).isEqualTo(mapOf("client-type" to "type"))
@@ -66,7 +64,7 @@ class HeadersToProxyTest : DescribeSpec ({
     it("returns the correct header map when isbackoffice has a value") {
         withTestApplication {
 
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("isbackoffice", "true")
             }.apply {
                 assertThat(headersToProxy()).isEqualTo(mapOf("isbackoffice" to "true"))
@@ -76,7 +74,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the correct header map when miauserproperties has a value") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("miauserproperties", "property")
             }.apply {
                 assertThat(headersToProxy()).isEqualTo(mapOf("miauserproperties" to "property"))
@@ -86,7 +84,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the correct header map when all platform headers have value") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("x-request-id", "1234abcd")
                 addHeader("miauserid", "userid")
                 addHeader("miausergroups", "group")
@@ -101,8 +99,8 @@ class HeadersToProxyTest : DescribeSpec ({
                         "miausergroups" to "group",
                         "miauserproperties" to "property",
                         "client-type" to "type",
-                        "miauserproperties" to "property"
-                    )
+                        "miauserproperties" to "property",
+                    ),
                 )
             }
         }
@@ -110,7 +108,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the header map with only headers to proxy when there are more") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("x-request-id", "1234abcd")
                 addHeader("miauserid", "userid")
                 addHeader("miausergroups", "group")
@@ -126,8 +124,8 @@ class HeadersToProxyTest : DescribeSpec ({
                         "miausergroups" to "group",
                         "miauserproperties" to "property",
                         "client-type" to "type",
-                        "miauserproperties" to "property"
-                    )
+                        "miauserproperties" to "property",
+                    ),
                 )
             }
         }
@@ -135,7 +133,7 @@ class HeadersToProxyTest : DescribeSpec ({
 
     it("returns the header map with additional headers to proxy if present") {
         withTestApplication {
-            handleRequest(HttpMethod.Get, "/proxy-headers"){
+            handleRequest(HttpMethod.Get, "/proxy-headers") {
                 addHeader("x-request-id", "1234abcd")
                 addHeader("miauserid", "userid")
                 addHeader("miausergroups", "group")
@@ -154,8 +152,8 @@ class HeadersToProxyTest : DescribeSpec ({
                         "miauserproperties" to "property",
                         "client-type" to "type",
                         "miauserproperties" to "property",
-                        "some-other-header-to-proxy" to "other"
-                    )
+                        "some-other-header-to-proxy" to "other",
+                    ),
                 )
             }
         }

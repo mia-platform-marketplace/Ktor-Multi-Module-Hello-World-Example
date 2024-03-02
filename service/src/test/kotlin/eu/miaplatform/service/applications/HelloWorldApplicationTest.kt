@@ -5,12 +5,12 @@ import assertk.assertions.isEqualTo
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.miaplatform.commons.ktor.install
-import eu.miaplatform.service.baseModule
 import eu.miaplatform.service.applications.helloworld.HelloWorldApplication
-import eu.miaplatform.service.services.HelloWorldService
+import eu.miaplatform.service.baseModule
 import eu.miaplatform.service.model.ErrorResponse
 import eu.miaplatform.service.model.request.HelloWorldRequestBody
 import eu.miaplatform.service.model.response.HelloWorldResponse
+import eu.miaplatform.service.services.HelloWorldService
 import io.kotest.core.spec.style.DescribeSpec
 import io.ktor.http.*
 import io.ktor.server.testing.*
@@ -18,7 +18,6 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.jupiter.api.*
-import org.slf4j.event.Level
 
 /**
  * End-to-end tests.
@@ -26,9 +25,10 @@ import org.slf4j.event.Level
  */
 class HelloWorldApplicationTest : DescribeSpec({
 
-    val objectMapper = ObjectMapper().apply {
-        setSerializationInclusion(JsonInclude.Include.NON_NULL)
-    }
+    val objectMapper =
+        ObjectMapper().apply {
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        }
 
     val service = mockk<HelloWorldService>()
 
@@ -47,13 +47,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                     }.apply {
                         assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                        val expectedBody = objectMapper.writeValueAsString(
-                            HelloWorldResponse(
-                                null,
-                                null,
-                                "Hello world!"
+                        val expectedBody =
+                            objectMapper.writeValueAsString(
+                                HelloWorldResponse(
+                                    null,
+                                    null,
+                                    "Hello world!",
+                                ),
                             )
-                        )
                         assertThat(response.content).isEqualTo(expectedBody)
                     }
                 }
@@ -68,13 +69,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                     }.apply {
                         assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                        val expectedBody = objectMapper.writeValueAsString(
-                            HelloWorldResponse(
-                                null,
-                                "param",
-                                "Hello world!"
+                        val expectedBody =
+                            objectMapper.writeValueAsString(
+                                HelloWorldResponse(
+                                    null,
+                                    "param",
+                                    "Hello world!",
+                                ),
                             )
-                        )
                         assertThat(response.content).isEqualTo(expectedBody)
                     }
                 }
@@ -88,9 +90,10 @@ class HelloWorldApplicationTest : DescribeSpec({
                         baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
-                        val body = objectMapper.writeValueAsString(
-                            HelloWorldRequestBody("name", "surname")
-                        )
+                        val body =
+                            objectMapper.writeValueAsString(
+                                HelloWorldRequestBody("name", "surname"),
+                            )
 
                         handleRequest(HttpMethod.Post, "/hello/1234") {
                             addHeader("Content-Type", "application/json")
@@ -98,13 +101,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                         }.apply {
                             assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                            val expectedBody = objectMapper.writeValueAsString(
-                                HelloWorldResponse(
-                                    "1234",
-                                    null,
-                                    "Hello world name surname!"
+                            val expectedBody =
+                                objectMapper.writeValueAsString(
+                                    HelloWorldResponse(
+                                        "1234",
+                                        null,
+                                        "Hello world name surname!",
+                                    ),
                                 )
-                            )
                             assertThat(response.content).isEqualTo(expectedBody)
                         }
                     }
@@ -115,9 +119,10 @@ class HelloWorldApplicationTest : DescribeSpec({
                         baseModule()
                         install(HelloWorldApplication("", service))
                     }) {
-                        val body = objectMapper.writeValueAsString(
-                            mapOf("name" to "name")
-                        )
+                        val body =
+                            objectMapper.writeValueAsString(
+                                mapOf("name" to "name"),
+                            )
 
                         handleRequest(HttpMethod.Post, "/hello/1234") {
                             addHeader("Content-Type", "application/json")
@@ -125,10 +130,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                         }.apply {
                             assertThat(response.status()?.value).isEqualTo(HttpStatusCode.BadRequest.value)
                             val servicePackage = "eu.miaplatform.service"
-                            val expectedBody = objectMapper.writeValueAsString(
-                                // if you change the package name, remember to update it in the following error or the test will fail
-                                ErrorResponse(1000, "Instantiation of [simple type, class $servicePackage.model.request.HelloWorldRequestBody] value failed for JSON property surname due to missing (therefore NULL) value for creator parameter surname which is a non-nullable type\n at [Source: (InputStreamReader); line: 1, column: 15] (through reference chain: $servicePackage.model.request.HelloWorldRequestBody[\"surname\"])")
-                            )
+                            val expectedBody =
+                                objectMapper.writeValueAsString(
+                                    // if you change the package name, remember to update it in the following error or the test will fail
+                                    ErrorResponse(
+                                        1000,
+                                        "Failed to convert request body to class $servicePackage.model.request.HelloWorldRequestBody",
+                                    ),
+                                )
                             assertThat(response.content).isEqualTo(expectedBody)
                         }
                     }
@@ -150,13 +159,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                         }.apply {
                             assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                            val expectedBody = objectMapper.writeValueAsString(
-                                HelloWorldResponse(
-                                    null,
-                                    null,
-                                    "Hello world! Book list: book1, book2"
+                            val expectedBody =
+                                objectMapper.writeValueAsString(
+                                    HelloWorldResponse(
+                                        null,
+                                        null,
+                                        "Hello world! Book list: book1, book2",
+                                    ),
                                 )
-                            )
                             assertThat(response.content).isEqualTo(expectedBody)
                         }
                     }
@@ -174,9 +184,10 @@ class HelloWorldApplicationTest : DescribeSpec({
                         }.apply {
                             assertThat(response.status()?.value).isEqualTo(HttpStatusCode.InternalServerError.value)
 
-                            val expectedBody = objectMapper.writeValueAsString(
-                                ErrorResponse(1000, "some error occurred")
-                            )
+                            val expectedBody =
+                                objectMapper.writeValueAsString(
+                                    ErrorResponse(1000, "some error occurred"),
+                                )
                             assertThat(response.content).isEqualTo(expectedBody)
                         }
                     }
@@ -194,13 +205,14 @@ class HelloWorldApplicationTest : DescribeSpec({
                         }.apply {
                             assertThat(response.status()?.value).isEqualTo(HttpStatusCode.OK.value)
 
-                            val expectedBody = objectMapper.writeValueAsString(
-                                HelloWorldResponse(
-                                    null,
-                                    "param",
-                                    "Hello world! Book list: book1, book2"
+                            val expectedBody =
+                                objectMapper.writeValueAsString(
+                                    HelloWorldResponse(
+                                        null,
+                                        "param",
+                                        "Hello world! Book list: book1, book2",
+                                    ),
                                 )
-                            )
                             assertThat(response.content).isEqualTo(expectedBody)
                         }
                     }

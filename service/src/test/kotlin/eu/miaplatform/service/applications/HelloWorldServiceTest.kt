@@ -10,7 +10,7 @@ import io.mockk.*
 import org.junit.jupiter.api.assertThrows
 
 class HelloWorldServiceTest : DescribeSpec({
-    val crud = mockk< CrudClientInterface>()
+    val crud = mockk<CrudClientInterface>()
 
     beforeEach { clearAllMocks() }
 
