@@ -8,7 +8,7 @@ plugins {
 
     // Apply to all projects, used to check unused dependencies, run `./gradlew lintGradle` to check dependencies.
     // Be aware that automatic fixing with `fixLintGradle` might break something.
-    id('nebula.lint') version "17.1.0"
+//    id('nebula.lint') version "17.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
 }
 
@@ -18,8 +18,8 @@ version '0.0.1'
 // Do not add dependencies here! Bad practice
 allprojects {
     group 'eu.miaplatform'
-    gradleLint.rules = ['all-dependency']
-    gradleLint.alwaysRun = false
+//    gradleLint.rules = ['all-dependency']
+//    gradleLint.alwaysRun = false
 }
 
 subprojects {

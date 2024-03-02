@@ -12,6 +12,7 @@ import eu.miaplatform.commons.Serialization
 import eu.miaplatform.commons.StatusService
 import eu.miaplatform.commons.client.CrudClientInterface
 import eu.miaplatform.commons.client.RetrofitClient
+import eu.miaplatform.commons.ktor.MiaLoggerPlugin
 import eu.miaplatform.commons.ktor.install
 import eu.miaplatform.commons.model.BadRequestException
 import eu.miaplatform.commons.model.InternalServerErrorException
@@ -66,29 +67,10 @@ fun Application.module() {
 }
 
 /**
- * Default implementation of Ktor of a log formatter. You can change this however you like to fit your needs.
- */
-private fun customCallFormat(call: ApplicationCall): String =
-    when (val status = call.response.status() ?: "Unhandled") {
-        HttpStatusCode.Found ->
-            "${status as HttpStatusCode}: " +
-                "${call.request.toLogString()} -> ${call.response.headers[HttpHeaders.Location]}"
-
-        "Unhandled" -> "$status: ${call.request.toLogString()}"
-        else -> "${status as HttpStatusCode}: ${call.request.toLogString()}"
-    }
-
-/**
  * Install common functionalities like open api, logging, metrics, serialization, etc. for this application.
  */
 fun Application.baseModule() {
-    install(CallLogging) {
-        format {
-            customCallFormat(it)
-        }
-        // don't log calls to health
-        filter { call -> !call.request.path().startsWith("/-/") }
-    }
+    install(MiaLoggerPlugin)
 
     // Documentation here: https://github.com/papsign/Ktor-OpenAPI-Generator
     val api =
