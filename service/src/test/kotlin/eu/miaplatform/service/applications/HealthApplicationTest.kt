@@ -12,11 +12,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.slf4j.event.Level
 
-class HealthApplicationTest : DescribeSpec ({
+class HealthApplicationTest : DescribeSpec({
     val objectMapper = ObjectMapper()
 
     describe("/-/health") {

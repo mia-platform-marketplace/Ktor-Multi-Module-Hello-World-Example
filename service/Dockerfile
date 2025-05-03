@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk
+FROM openjdk:17-jdk-slim
 
 ARG COMMIT_SHA=<not-specified>
 ARG BUILD_FILE_NAME=application.jar

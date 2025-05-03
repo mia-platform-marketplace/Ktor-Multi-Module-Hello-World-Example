@@ -8,7 +8,8 @@ plugins {
 
     // Apply to all projects, used to check unused dependencies, run `./gradlew lintGradle` to check dependencies.
     // Be aware that automatic fixing with `fixLintGradle` might break something.
-    id('nebula.lint') version "17.1.0"
+//    id('nebula.lint') version "17.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
 }
 
 // Do not delete, this will get updated automatically when running the version command
@@ -17,11 +18,13 @@ version '0.0.1'
 // Do not add dependencies here! Bad practice
 allprojects {
     group 'eu.miaplatform'
-    gradleLint.rules = ['all-dependency']
-    gradleLint.alwaysRun = false
+//    gradleLint.rules = ['all-dependency']
+//    gradleLint.alwaysRun = false
 }
 
 subprojects {
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+
     // setup junit5 and remove all api imports of junit 4
     configurations {
         implementation {
@@ -32,11 +35,11 @@ subprojects {
         }
 
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "17"
         }
         tasks.withType(JavaCompile).configureEach {
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
+            sourceCompatibility = "17"
+            targetCompatibility = "17"
         }
     }
 }
